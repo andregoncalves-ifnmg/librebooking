@@ -588,6 +588,7 @@
 
 			setUpPopovers();
 			hidePopoversWhenClickAway();
+			hidePopoversWhenClickAway();
 			setUpEditables();
             dropzone($("#termsOfServiceUpload"));
 

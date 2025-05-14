@@ -208,6 +208,7 @@ class en_us extends Language
         $strings['FindUser'] = 'Find User';
         $strings['Created'] = 'Created';
         $strings['LastModified'] = 'Last Modified';
+        $strings['LastActionBy'] = 'Last Action By';
         $strings['GroupName'] = 'Group Name';
         $strings['GroupMembers'] = 'Group Members';
         $strings['GroupRoles'] = 'Group Roles';
