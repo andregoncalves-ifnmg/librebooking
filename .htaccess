@@ -1,12 +1,32 @@
 RewriteEngine On
+RewriteBase /librebooking/
+
+# Serve index.php por padrão ao acessar a raiz
+DirectoryIndex index.php
+
+# Redireciona explicitamente raiz → index.php (opcional)
+RewriteRule ^/?$ /librebooking/index.php [R=302,L]
+
 # Set RewriteBase if your physical path is different from the URL. For example, if using an alias
 
 # Uncomment the following two lines to force HTTPS
 #RewriteCond %{HTTPS} off
 #RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-RewriteCond %{REQUEST_URI} !^/Web/
-RewriteRule ^(.*)$ /Web/$1 [R]
+# 1. Evita directory listing
+Options -Indexes
+
+# 2. Redireciona só pedidos externos a /Web/... para URL sem o Web/
+RewriteCond %{THE_REQUEST} \s/Web/
+RewriteRule ^Web/(.*)$ /librebooking/$1 [R=301,L]
+
+# 3. Se o recurso existir como arquivo ou diretório, serve direto
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# 4. Caso contrário, internally reescreve /librebooking/... → /Web/...
+RewriteRule ^(.*)$ Web/$1 [L,QSA]
 
 #Header Set Access-Control-Allow-Origin "*"
 #Header add Access-Control-Allow-Headers "origin, x-requested-with, content-type"

@@ -4,8 +4,8 @@ class URIScriptValidator implements IURIScriptValidator
 {
     public static function validate($requestURI, $redirectURL): void
     {
-        $segments = explode('/', $requestURI);
-
+        $segments = explode('/', trim($requestURI, '/'));
+        
         $possibleScripts = self::ValidatePossibleScripts(($requestURI));
 
         if (isset($segments[2]) || $possibleScripts) {
