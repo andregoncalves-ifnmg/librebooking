@@ -22,7 +22,7 @@ class ReservationStartTimeRule implements IReservationValidationRule
      */
     public function Validate($reservationSeries, $retryParameters)
     {
-        $constraint = Configuration::Instance()->GetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_START_TIME_CONSTRAINT);
+        $constraint = Configuration::Instance()->GetKey(ConfigKeys::RESERVATION_START_TIME_CONSTRAINT);
 
         if (empty($constraint)) {
             $constraint = ReservationStartTimeConstraint::_DEFAULT;
@@ -37,7 +37,7 @@ class ReservationStartTimeRule implements IReservationValidationRule
         $dateThatShouldBeLessThanNow = $currentInstance->StartDate();
         if ($constraint == ReservationStartTimeConstraint::CURRENT) {
             $timezone = $dateThatShouldBeLessThanNow->Timezone();
-            /** @var $currentPeriod SchedulePeriod */
+            /** @var SchedulePeriod $currentPeriod */
             $currentPeriod = $this->scheduleRepository
                     ->GetLayout($reservationSeries->ScheduleId(), new ScheduleLayoutFactory($timezone))
                     ->GetPeriod($currentInstance->EndDate());

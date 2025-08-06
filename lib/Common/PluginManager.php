@@ -169,9 +169,9 @@ class PluginManager
 
     /**
      * Loads the configured Styling plugin, if one exists
-     * If no plugin exists, the default PreReservationFactory class is returned
+     * If no plugin exists, the default StylingFactory class is returned
      *
-     * @return IPreReservationFactory
+     * @return IStylingFactory
      */
     public function LoadStyling()
     {
@@ -189,15 +189,37 @@ class PluginManager
     }
 
     /**
-     * @param string $configKey key to use
+     * Loads the configured Export plugin, if one exists
+     * If no plugin exists, the default ExportFactory class is returned
+     *
+     * @return IExportFactory
+     */
+    public function LoadExport()
+    {
+        require_once(ROOT_DIR . 'lib/Application/Export/namespace.php');
+
+        $factory = new ExportFactory();
+
+        $plugin = $this->LoadPlugin(ConfigKeys::PLUGIN_EXPORT, 'Export', $factory);
+
+        if (!is_null($plugin)) {
+            return $plugin;
+        }
+
+        return $factory;
+    }
+
+    /**
+     * @param array $configDef key to use
      * @param string $pluginSubDirectory subdirectory name under 'plugins'
      * @param mixed $baseImplementation the base implementation of the plugin.  allows decorating
      * @return mixed|null plugin implementation
      */
-    private function LoadPlugin($configKey, $pluginSubDirectory, $baseImplementation)
+    private function LoadPlugin($configDef, $pluginSubDirectory, $baseImplementation)
     {
+        $configKey = $configDef['key'];
         if (!$this->Cached($configKey)) {
-            $plugin = Configuration::Instance()->GetSectionKey(ConfigSection::PLUGINS, $configKey);
+            $plugin = Configuration::Instance()->GetKey($configDef);
             $pluginFile = ROOT_DIR . "plugins/$pluginSubDirectory/$plugin/$plugin.php";
 
             if (!empty($plugin) && file_exists($pluginFile)) {

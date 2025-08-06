@@ -485,6 +485,9 @@ class ManageResourcesPage extends ActionPage implements IManageResourcesPage
             new ReservationViewRepository()
         );
 
+        /**
+         * @todo(jlvillal): 2025-07-15: Convert this to `Page` for LibreBooking v4.0.0
+         */
         $this->pageablePage = new PageablePage($this);
         $this->Set(
             'YesNoOptions',
@@ -502,11 +505,14 @@ class ManageResourcesPage extends ActionPage implements IManageResourcesPage
             ]
         );
 
-        $this->Set('CreditsEnabled', Configuration::Instance()->GetSectionKey(ConfigSection::CREDITS, ConfigKeys::CREDITS_ENABLED, new BooleanConverter()));
+        $this->Set('CreditsEnabled', Configuration::Instance()->GetKey(ConfigKeys::CREDITS_ENABLED, new BooleanConverter()));
 
         $url = $this->server->GetUrl();
         $exportUrl = BookedStringHelper::Contains($url, '?') ? $url . '&dr=export' : $this->server->GetRequestUri() . '?dr=export';
         $this->Set('ExportUrl', $exportUrl);
+
+        // If the contact for a resource must be chosen from a list of registered users.
+        $this->Set('ResourceContactIsUser', Configuration::Instance()->GetKey(ConfigKeys::RESOURCE_CONTACT_IS_USER, new BooleanConverter()));
     }
 
     public function ProcessPageLoad()
@@ -526,6 +532,7 @@ class ManageResourcesPage extends ActionPage implements IManageResourcesPage
 
     /**
      * @return int
+     * @todo(jlvillal): 2025-07-15: Remove this method for LibreBooking v4.0.0
      */
     public function GetPageSize()
     {
@@ -536,6 +543,7 @@ class ManageResourcesPage extends ActionPage implements IManageResourcesPage
             return 10;
         }
         return $pageSize;*/
+        throw new \LogicException('GetPageSize is not implemented - replaced by dataTable pagination');
     }
 
     /**
@@ -1303,7 +1311,7 @@ class ResourceFilterValues
 
             $attributeFragment = new SqlFilterNull();
 
-            /** @var $attribute Attribute */
+            /** @var mixed $value */
             foreach ($this->Attributes as $id => $value) {
                 if ($value == null || $value == '' || !array_key_exists($id, $attributeDefinitions)) {
                     continue;

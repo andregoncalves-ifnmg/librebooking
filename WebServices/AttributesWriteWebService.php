@@ -9,19 +9,13 @@ require_once(ROOT_DIR . 'WebServices/Requests/CustomAttributes/CustomAttributeRe
 class AttributesWriteWebService
 {
     /**
-     * @var IAttributeSaveController
-     */
-    private $attributeController;
-
-    /**
      * @var IRestServer
      */
     private $server;
 
-    public function __construct(IRestServer $server, IAttributeSaveController $attributeController)
+    public function __construct(IRestServer $server, private readonly IAttributeSaveController $attributeController)
     {
         $this->server = $server;
-        $this->attributeController = $attributeController;
     }
 
     /**
@@ -37,7 +31,7 @@ class AttributesWriteWebService
      */
     public function Create()
     {
-        /** @var $request CustomAttributeRequest */
+        /** @var CustomAttributeRequest $request */
         $request = $this->server->GetRequest();
 
         Log::Debug('AttributesWriteWebService.Create() User=%s, Request=%s', $this->server->GetSession()->UserId, json_encode($request));
@@ -51,7 +45,7 @@ class AttributesWriteWebService
         } else {
             Log::Debug('AttributesWriteWebService.Create() - Create Failed.');
 
-            $this->server->WriteResponse(new FailedResponse($this->server, $result->Errors()), RestResponse::BAD_REQUEST_CODE);
+            $this->server->WriteResponse(new FailedResponse($result->Errors()), RestResponse::BAD_REQUEST_CODE);
         }
     }
 
@@ -69,7 +63,7 @@ class AttributesWriteWebService
      */
     public function Update($attributeId)
     {
-        /** @var $request CustomAttributeRequest */
+        /** @var CustomAttributeRequest $request */
         $request = $this->server->GetRequest();
 
         Log::Debug('AttributesWriteWebService.Update() User=%s, AttributeId=%s, Request=%s', $this->server->GetSession()->UserId, $attributeId, json_encode($request));
@@ -83,7 +77,7 @@ class AttributesWriteWebService
         } else {
             Log::Debug('AttributesWriteWebService.Update() - Update Failed.');
 
-            $this->server->WriteResponse(new FailedResponse($this->server, $result->Errors()), RestResponse::BAD_REQUEST_CODE);
+            $this->server->WriteResponse(new FailedResponse($result->Errors()), RestResponse::BAD_REQUEST_CODE);
         }
     }
 
@@ -107,7 +101,7 @@ class AttributesWriteWebService
         } else {
             Log::Debug('AttributesWriteWebService.Delete() - Attribute Delete Failed.');
 
-            $this->server->WriteResponse(new FailedResponse($this->server, $result->Errors()), RestResponse::BAD_REQUEST_CODE);
+            $this->server->WriteResponse(new FailedResponse($result->Errors()), RestResponse::BAD_REQUEST_CODE);
         }
     }
 }

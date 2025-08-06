@@ -33,7 +33,7 @@ class ManageGroupsPresenter extends ActionPresenter
      */
     private $page;
     /**
-     * @var GroupRepository
+     * @var IGroupRepository&IGroupViewRepository
      */
     private $groupRepository;
     /**
@@ -51,14 +51,14 @@ class ManageGroupsPresenter extends ActionPresenter
 
     /**
      * @param IManageGroupsPage $page
-     * @param IGroupRepository $groupRepository
+     * @param IGroupRepository&IGroupViewRepository $groupRepository
      * @param IResourceRepository $resourceRepository
      * @param IScheduleRepository $scheduleRepository
      * @param IUserRepository $userRepository
      */
     public function __construct(
         IManageGroupsPage $page,
-        GroupRepository $groupRepository,
+        IGroupRepository&IGroupViewRepository $groupRepository,
         IResourceRepository $resourceRepository,
         IScheduleRepository $scheduleRepository,
         IUserRepository $userRepository
@@ -101,7 +101,7 @@ class ManageGroupsPresenter extends ActionPresenter
         } else {
             $groupList = $this->groupRepository->GetList(
                 $this->page->GetPageNumber(),
-                $this->page->GetPageSize(),
+                null,
                 $this->page->GetSortField(),
                 $this->page->GetSortDirection()
             );

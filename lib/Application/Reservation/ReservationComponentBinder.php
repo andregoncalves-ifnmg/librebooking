@@ -48,7 +48,7 @@ class ReservationDateBinder implements IReservationComponentBinder
         $initializer->SetDates($startDate, $endDate, $startPeriods, $endPeriods, $schedule->GetWeekdayStart(), $layout->UsesCustomLayout());
 
         $hideRecurrence = (!$initializer->CurrentUser()->IsAdmin &&
-            Configuration::Instance()->GetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_PREVENT_RECURRENCE, new BooleanConverter())
+            Configuration::Instance()->GetKey(ConfigKeys::RESERVATION_PREVENT_RECURRENCE, new BooleanConverter())
             || $layout->UsesCustomLayout());
 
         $initializer->HideRecurrence($hideRecurrence);
@@ -141,8 +141,7 @@ class ReservationUserBinder implements IReservationComponentBinder
         $reservationUser = $this->userRepository->GetById($userId);
         $initializer->SetReservationUser($reservationUser);
 
-        $hideUser = Configuration::Instance()->GetSectionKey(
-            ConfigSection::PRIVACY,
+        $hideUser = Configuration::Instance()->GetKey(
             ConfigKeys::PRIVACY_HIDE_USER_DETAILS,
             new BooleanConverter()
         );
@@ -212,7 +211,7 @@ class ReservationResourceBinder implements IReservationComponentBinder
             $bindableResourceData->SetReservationResource(reset($resources));
         }
 
-        /** @var $resource ResourceDto */
+        /** @var ResourceDto $resource */
         foreach ($resources as $resource) {
             $bindableResourceData->AddAvailableResource($resource);
             if ($resource->Id == $requestedResourceId) {
@@ -341,7 +340,7 @@ class ReservationDetailsBinder implements IReservationComponentBinder
 
     private function IsCurrentUserParticipating($currentUserId)
     {
-        /** @var $user ReservationUserView */
+        /** @var ReservationUserView $user */
         foreach ($this->reservationView->Participants as $user) {
             if ($user->UserId == $currentUserId) {
                 return true;
@@ -352,7 +351,7 @@ class ReservationDetailsBinder implements IReservationComponentBinder
 
     private function IsCurrentUserInvited($currentUserId)
     {
-        /** @var $user ReservationUserView */
+        /** @var ReservationUserView $user */
         foreach ($this->reservationView->Invitees as $user) {
             if ($user->UserId == $currentUserId) {
                 return true;
@@ -393,7 +392,7 @@ class ReservationDetailsBinder implements IReservationComponentBinder
 
         $resourceIds = $resourceRepo->GetUserGroupResourcePermissions($userId,$resourceIds);
 
-        if (ServiceLocator::GetServer()->GetUserSession()->IsResourceAdmin){    
+        if (ServiceLocator::GetServer()->GetUserSession()->IsResourceAdmin){
             $resourceIds = $resourceRepo->GetResourceAdminResourceIds($userId, $resourceIds);
         }
 

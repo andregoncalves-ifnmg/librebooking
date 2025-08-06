@@ -45,6 +45,14 @@
         {if isset($Trumbowyg) && $Trumbowyg}
             {cssfile src="css/trumbowyg.min.css" rel="stylesheet"}
         {/if}
+        {if isset($DataTable) && $DataTable}
+            {cssfile src="scripts/css/datatable/cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet"}
+            {cssfile src="scripts/css/datatable/cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet"}
+            {cssfile src="scripts/css/datatable/cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" rel="stylesheet"}
+        {/if}
+        {if isset($DatePicker) && $DatePicker}
+            {cssfile src="scripts/css/flatpickr/cdn.jsdelivr.net/npm/flatpickr/4.6.13/dist/flatpickr.min.css" rel="stylesheet"}
+        {/if}
     {else}
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" type="text/css" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -58,11 +66,18 @@
                 type="text/css" />
         {/if}
         {if isset($Trumbowyg) && $Trumbowyg}
-            <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.27.3/ui/trumbowyg.min.css"
-            type="text/css" />
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.27.3/ui/trumbowyg.min.css"
+                type="text/css" />
         {/if}
-
+        {if isset($DataTable) && $DataTable}
+            <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" type="text/css" />
+            <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+            <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css"
+                type="text/css">
+        {/if}
+        {if isset($DatePicker) && $DatePicker}
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+        {/if}
     {/if}
     {if isset($InlineEdit) && $InlineEdit}
         {cssfile src="scripts/js/x-editable/css/bootstrap-editable.css" rel="stylesheet"}
@@ -83,7 +98,7 @@
     {cssfile src="scripts/css/jquery-ui-timepicker-addon.css"}
     {cssfile src="librebooking.css"}
     {if isset($cssFiles) && $cssFiles neq ''}
-        {assign var='CssFileList' value=','|explode:$cssFiles}
+        {assign var='CssFileList' value=$cssFiles|split:','}
         {foreach from=$CssFileList item=cssFile}
             {cssfile src=$cssFile}
         {/foreach}
@@ -99,16 +114,10 @@
     {/if}
 
     {if isset($printCssFiles) && $printCssFiles neq ''}
-        {assign var='PrintCssFileList' value=','|explode:$printCssFiles}
+        {assign var='PrintCssFileList' value=$printCssFiles|split:','}
         {foreach from=$PrintCssFileList item=cssFile}
             <link rel='stylesheet' type='text/css' href='{$Path}{$cssFile}' media='print' />
         {/foreach}
-    {/if}
-    {if isset($DataTable) && $DataTable}
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" type="text/css" />
-        <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
-        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css"
-            type="text/css">
     {/if}
 
     <!-- End CSS -->
@@ -119,7 +128,7 @@
     {if !isset($HideNavBar) || $HideNavBar == false}
         <div class="d-flex align-items-center gap-2 m-2">
             <a class="navbar-brand" href="{$HomeUrl}">
-                {html_image src="$LogoUrl?{$Version}" alt="$Title" class="logo"}
+                <img src="{$Path}img/{$LogoUrl}?{$Version}" alt="{$Title}" class="logo">
             </a>
             <div class="border-start ps-2 d-flex flex-column">
                 {if $CompanyName neq ''}
@@ -130,8 +139,6 @@
         </div>
         <nav class="navbar navbar-expand-lg bg-light shadow-sm py-2 sticky-top">
             <div class="container-fluid">
-                {*<a class="navbar-brand py-0" href="{$HomeUrl}">{html_image src="$LogoUrl?{$Version}" alt="$Title"
-                    class="logo"}</a>*}
                 <button type="button" class="navbar-toggler" data-bs-toggle="collapse"
                     data-bs-target="#librebooking-navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -249,7 +256,6 @@
                                                     href="{$Path}admin/manage_payments.php">{translate key="ManagePayments"}</a>
                                             </li>
                                         {/if}
-                                        {*<li class="dropdown-header">{translate key=Customization}</li>*}
                                         <li id="navManageAttributes"><a class="dropdown-item"
                                                 href="{$Path}admin/manage_attributes.php">{translate key="CustomAttributes"}</a>
                                         </li>
@@ -364,7 +370,7 @@
                                             href="{$Path}admin/manage_theme.php">{translate key="LookAndFeel"}</a>
                                     </li>
                                     <li id="navImport"><a class="dropdown-item"
-                                            href="{$Path}admin/import.php">{translate key="Import"}</a>
+                                            href="{$Path}admin/ics_import.php">{translate key="Import"}</a>
                                     </li>
                                     <li id="navServerSettings"><a class="dropdown-item"
                                             href="{$Path}admin/server_settings.php">{translate key="ServerSettings"}</a>
@@ -413,4 +419,4 @@
         </nav>
     {/if}
 
-<div id="main" class="container-fluid mt-3">
+<div id="main" class="container-fluid my-3">

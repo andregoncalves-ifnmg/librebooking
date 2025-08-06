@@ -15,7 +15,43 @@ interface IDailyScheduleLayout
     public function UsesDailyLayouts();
 }
 
-interface IScheduleLayout extends ILayoutTimezone, IDailyScheduleLayout
+interface ILayoutCreation extends ILayoutTimezone, IDailyScheduleLayout
+{
+    /**
+     * Appends a period to the schedule layout
+     *
+     * @param Time $startTime starting time of the schedule in specified timezone
+     * @param Time $endTime ending time of the schedule in specified timezone
+     * @param string $label optional label for the period
+     * @param DayOfWeek|int|null $dayOfWeek
+     */
+    public function AppendPeriod(Time $startTime, Time $endTime, $label = null, $dayOfWeek = null);
+
+    /**
+     * Appends a period that is not reservable to the schedule layout
+     *
+     * @param Time $startTime starting time of the schedule in specified timezone
+     * @param Time $endTime ending time of the schedule in specified timezone
+     * @param string $label optional label for the period
+     * @param DayOfWeek|int|null $dayOfWeek
+     * @return void
+     */
+    public function AppendBlockedPeriod(Time $startTime, Time $endTime, $label = null, $dayOfWeek = null);
+
+    /**
+     *
+     * @param DayOfWeek|int|null $dayOfWeek
+     * @return LayoutPeriod[] array of LayoutPeriod
+     */
+    public function GetSlots($dayOfWeek = null);
+
+    /**
+     * @return int
+     */
+    public function GetType();
+}
+
+interface IScheduleLayout extends ILayoutCreation
 {
     /**
      * @param Date $layoutDate
@@ -53,42 +89,6 @@ interface IScheduleLayout extends ILayoutTimezone, IDailyScheduleLayout
      * @return bool
      */
     public function UsesCustomLayout();
-}
-
-interface ILayoutCreation extends ILayoutTimezone, IDailyScheduleLayout
-{
-    /**
-     * Appends a period to the schedule layout
-     *
-     * @param Time $startTime starting time of the schedule in specified timezone
-     * @param Time $endTime ending time of the schedule in specified timezone
-     * @param string $label optional label for the period
-     * @param DayOfWeek|int|null $dayOfWeek
-     */
-    public function AppendPeriod(Time $startTime, Time $endTime, $label = null, $dayOfWeek = null);
-
-    /**
-     * Appends a period that is not reservable to the schedule layout
-     *
-     * @param Time $startTime starting time of the schedule in specified timezone
-     * @param Time $endTime ending time of the schedule in specified timezone
-     * @param string $label optional label for the period
-     * @param DayOfWeek|int|null $dayOfWeek
-     * @return void
-     */
-    public function AppendBlockedPeriod(Time $startTime, Time $endTime, $label = null, $dayOfWeek = null);
-
-    /**
-     *
-     * @param DayOfWeek|int|null $dayOfWeek
-     * @return LayoutPeriod[] array of LayoutPeriod
-     */
-    public function GetSlots($dayOfWeek = null);
-
-    /**
-     * @return int
-     */
-    public function GetType();
 }
 
 class ScheduleLayout implements IScheduleLayout, ILayoutCreation
@@ -261,7 +261,7 @@ class ScheduleLayout implements IScheduleLayout, ILayoutCreation
         );
         $midnight = $layoutDate->GetDate();
 
-        /* @var $period LayoutPeriod */
+        /* @var LayoutPeriod $period */
         foreach ($periods as $period) {
             if ($hideBlockedPeriods && !$period->IsReservable()) {
                 continue;
@@ -377,7 +377,7 @@ class ScheduleLayout implements IScheduleLayout, ILayoutCreation
     private function AddDailyPeriods($day, $baseDateInLayoutTz, $requestedDate, $list, $hideBlockedPeriods = false)
     {
         $periods = $this->_periods[$day];
-        /** @var $period LayoutPeriod */
+        /** @var LayoutPeriod $period */
         foreach ($periods as $period) {
             if ($hideBlockedPeriods && !$period->IsReservable()) {
                 continue;
@@ -516,7 +516,7 @@ class ScheduleLayout implements IScheduleLayout, ILayoutCreation
         $tempDate = $date->ToTimezone($timezone);
         $periods = $this->getPeriods($tempDate);
 
-        /** @var $period LayoutPeriod */
+        /** @var LayoutPeriod $period */
         foreach ($periods as $period) {
             $start = Date::Create(
                 $tempDate->Year(),

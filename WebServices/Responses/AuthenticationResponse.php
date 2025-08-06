@@ -18,7 +18,7 @@ class AuthenticationResponse extends RestResponse
      */
     public static function Success(IRestServer $server, $userSession, $version)
     {
-        $response = new AuthenticationResponse($server);
+        $response = new AuthenticationResponse();
         $response->sessionToken = $userSession->SessionToken;
         $response->sessionExpires = $userSession->SessionExpiration;
         $response->isAuthenticated = true;
@@ -42,6 +42,13 @@ class AuthenticationResponse extends RestResponse
     {
         $response = new AuthenticationResponse();
         $response->message = 'Login failed. Invalid username or password.';
+        return $response;
+    }
+
+    public static function NotAuthorized()
+    {
+        $response = new AuthenticationResponse();
+        $response->message = 'Login failed. API access not authorized.';
         return $response;
     }
 

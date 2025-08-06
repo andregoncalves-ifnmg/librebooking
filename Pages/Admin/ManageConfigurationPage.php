@@ -48,12 +48,6 @@ interface IManageConfigurationPage extends IActionPage
     public function SetSelectedConfigFile($configFileName);
 
     /**
-     * @param string[] $homepageValues
-     * @param string[] $homepageOutput
-     */
-    public function SetHomepages($homepageValues, $homepageOutput);
-
-    /**
      * @param string $scriptUrl
      * @param string $suggestedUrl
      */
@@ -62,37 +56,7 @@ interface IManageConfigurationPage extends IActionPage
     /**
      * @param string[] $values
      */
-    public function SetAuthenticationPluginValues($values);
 
-    /**
-     * @param string[] $values
-     */
-    public function SetAuthorizationPluginValues($values);
-
-    /**
-     * @param string[] $values
-     */
-    public function SetPermissionPluginValues($values);
-
-    /**
-     * @param string[] $values
-     */
-    public function SetPostRegistrationPluginValues($values);
-
-    /**
-     * @param string[] $values
-     */
-    public function SetPreReservationPluginValues($values);
-
-    /**
-     * @param string[] $values
-     */
-    public function SetPostReservationPluginValues($values);
-
-    /**
-     * @param string[] $values
-     */
-    public function SetStylingPluginValues($values);
 
     /**
      * @return int
@@ -146,10 +110,13 @@ class ManageConfigurationPage extends ActionPage implements IManageConfiguration
         $this->presenter->PageLoad();
         $this->Set('Settings', $this->settings);
         $this->Set('SectionSettings', $this->sectionSettings);
+        $this->Set('DefaultTimezoneKey', ConfigKeys::DEFAULT_TIMEZONE['key']);
         $this->PopulateTimezones();
+        $this->Set('DefaultLanguageKey', ConfigKeys::DEFAULT_LANGUAGE['key']);
         $this->Set('Languages', Resources::GetInstance()->AvailableLanguages);
+        $this->Set('DefaultHomepageKey', ConfigKeys::DEFAULT_HOMEPAGE['key']);
         $this->Set('SettingNames', $this->settingNames->ToString());
-
+        $this->Set('IsEnvPresent', Configuration::EnvFilePresent());
         $this->Display('Admin/Configuration/manage_configuration.tpl');
     }
 
@@ -205,12 +172,6 @@ class ManageConfigurationPage extends ActionPage implements IManageConfiguration
         return $submittedSettings;
     }
 
-    public function SetHomepages($homepageValues, $homepageOutput)
-    {
-        $this->Set('HomepageValues', $homepageValues);
-        $this->Set('HomepageOutput', $homepageOutput);
-    }
-
     public function SetConfigFileOptions($configFiles)
     {
         $this->Set('ConfigFiles', $configFiles);
@@ -231,36 +192,6 @@ class ManageConfigurationPage extends ActionPage implements IManageConfiguration
         $this->Set('CurrentScriptUrl', $currentScriptUrl);
         $this->Set('SuggestedScriptUrl', $suggestedScriptUrl);
         $this->Set('ShowScriptUrlWarning', true);
-    }
-
-    public function SetAuthenticationPluginValues($values)
-    {
-        $this->Set('AuthenticationPluginValues', $values);
-    }
-
-    public function SetAuthorizationPluginValues($values)
-    {
-        $this->Set('AuthorizationPluginValues', $values);
-    }
-    public function SetPermissionPluginValues($values)
-    {
-        $this->Set('PermissionPluginValues', $values);
-    }
-    public function SetPostRegistrationPluginValues($values)
-    {
-        $this->Set('PostRegistrationPluginValues', $values);
-    }
-    public function SetPreReservationPluginValues($values)
-    {
-        $this->Set('PreReservationPluginValues', $values);
-    }
-    public function SetPostReservationPluginValues($values)
-    {
-        $this->Set('PostReservationPluginValues', $values);
-    }
-    public function SetStylingPluginValues($values)
-    {
-        $this->Set('StylingPluginValues', $values);
     }
 
     public function GetHomePageId()

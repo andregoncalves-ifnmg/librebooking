@@ -26,8 +26,7 @@
 			</thead>
 			<tbody>
 				{foreach from=$Attributes item=attribute}
-					{*{cycle values='row0,row1' assign=rowCss}*}
-					<tr class="{$rowCss}" attributeId="{$attribute->Id()}">
+					<tr attributeId="{$attribute->Id()}">
 						<td class="d-none">{$attribute->Id()}</td>
 						<td>{$attribute->SortOrder()}</td>
 						<td>{$attribute->Label()}</td>
@@ -39,7 +38,7 @@
 							{/if}</td>
 						{if $Category != CustomAttributeCategory::RESERVATION}
 							<td>{if $attribute->UniquePerEntity()}
-									{', '|implode:$attribute->EntityDescriptions()}
+									{$attribute->EntityDescriptions()|join:', '}
 								{else}
 									{translate key=All}
 								{/if}
@@ -47,7 +46,7 @@
 						{/if}
 						<td>
 							{if $attribute->HasSecondaryEntities()}
-								{', '|implode:$attribute->SecondaryEntityDescriptions()}
+								{$attribute->SecondaryEntityDescriptions()|join:', '}
 							{else}
 								{translate key=All}
 							{/if}
@@ -94,15 +93,15 @@
 		type: "{$attribute->Type()}",
 		sortOrder: "{$attribute->SortOrder()}",
 		{if $attribute->EntityIds()|count > 0}
-			entityIds: ["{'","'|implode:$attribute->EntityIds()}"],
+			entityIds: ["{$attribute->EntityIds()|join:'","'}"],
 		{else}
 			entityIds: [],
 			{/if}
-			entityDescriptions: ["{'","'|implode:$attribute->EntityDescriptions()}"],
+			entityDescriptions: ["{$attribute->EntityDescriptions()|join:'","'}"],
 			adminOnly: {$attribute->AdminOnly()},
 			{if $attribute->HasSecondaryEntities()}
-				secondaryEntityIds: ["{'","'|implode:$attribute->SecondaryEntityIds()}"],
-				secondaryEntityDescriptions: ["{'","'|implode:$attribute->SecondaryEntityDescriptions()}"],
+				secondaryEntityIds: ["{$attribute->SecondaryEntityIds()|join:'","'}"],
+				secondaryEntityDescriptions: ["{$attribute->SecondaryEntityDescriptions()|join:'","'}"],
 			{else}
 				secondaryEntityIds: [],
 				secondaryEntityDescriptions: [],

@@ -296,7 +296,7 @@ class ReservationViewRepositoryTest extends TestBase
 
     public function testIsCheckinAvailableWithin5MinutesOfStart()
     {
-        $this->fakeConfig->SetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_CHECKIN_MINUTES, 5);
+        $this->fakeConfig->SetKey(ConfigKeys::RESERVATION_CHECKIN_MINUTES_PRIOR, 5);
 
         $view = new ReservationView();
         $view->StartDate = Date::Now()->AddMinutes(4);
@@ -453,7 +453,7 @@ class ReservationViewRepositoryTest extends TestBase
 
         $accessories = $this->repository->GetAccessoriesWithin($dateRange);
 
-        $a = new AccessoryReservation($refNum, $start->ToUtc(), $end->ToUtc(), $accessoryId, $quantity, $accessoryName);
+        $a = new AccessoryReservation($refNum, $start->ToUtc(), $end->ToUtc(), $accessoryId, $quantity);
 
         $this->assertEquals($getAccessoriesCommand, $this->db->_LastCommand);
         $this->assertEquals(2, count($accessories));
@@ -563,7 +563,7 @@ class ReservationViewRepositoryTest extends TestBase
 
     public function testGetsCorrectReservationColor()
     {
-        $this->fakeConfig->SetSectionKey(ConfigSection::SCHEDULE, ConfigKeys::SCHEDULE_PER_USER_COLORS, true);
+        $this->fakeConfig->SetKey(ConfigKeys::SCHEDULE_USE_PER_USER_COLORS, true);
         $preferences = UserPreferences::Parse(UserPreferences::RESERVATION_COLOR . '=000000');
         $reservationItemView = new ReservationItemView();
         $reservationItemView->ResourceColor = 'ffffff';

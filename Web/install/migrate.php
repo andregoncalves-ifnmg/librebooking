@@ -246,7 +246,7 @@ class MigrationPresenter
             $currentDatabase = ServiceLocator::GetDatabase();
             $runTarget = $this->page->GetRunTarget();
             if (!empty($runTarget)) {
-                $this->Migrate($runTarget, $legacyDatabase, $currentDatabase);
+                $this->Migrate($runTarget);
             } elseif ($this->page->IsLoggingIn()) {
                 if ($this->TestInstallPassword() && $this->TestLegacyConnection()) {
                     $this->page->StartMigration();
@@ -344,7 +344,7 @@ class MigrationPresenter
      */
     private function TestInstallPassword()
     {
-        $password = Configuration::Instance()->GetKey(ConfigKeys::INSTALLATION_PASSWORD);
+        $password = Configuration::Instance()->GetKey(ConfigKeys::INSTALL_PASSWORD);
 
         if (empty($password) || $password != $this->page->GetInstallPassword()) {
             MigrationSession::SetPasswordOK(null);
@@ -446,6 +446,7 @@ class MigrationPresenter
 
             $newScheduleReader = $currentDatabase->Query(new AdHocCommand("select schedule_id from schedules where legacyId = \"{$row['scheduleid']}\""));
 
+            $newScheduleId = null;
             if ($srow = $newScheduleReader->GetRow()) {
                 $newScheduleId = $srow['schedule_id'];
             }
@@ -646,7 +647,7 @@ class MigrationPresenter
                 '',
                 '',
                 Configuration::Instance()->GetDefaultTimezone(),
-                empty($row['lang']) ? Configuration::Instance()->GetKey(ConfigKeys::LANGUAGE) : $row['lang'],
+                empty($row['lang']) ? Configuration::Instance()->GetKey(ConfigKeys::DEFAULT_LANGUAGE) : $row['lang'],
                 Pages::DEFAULT_HOMEPAGE_ID,
                 $row['phone'],
                 $row['institution'],

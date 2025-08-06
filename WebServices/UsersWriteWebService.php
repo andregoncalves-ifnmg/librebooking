@@ -15,15 +15,9 @@ class UsersWriteWebService
      */
     private $server;
 
-    /**
-     * @var IUserSaveController
-     */
-    private $controller;
-
-    public function __construct(IRestServer $server, IUserSaveController $controller)
+    public function __construct(IRestServer $server, private readonly IUserSaveController $controller)
     {
         $this->server = $server;
-        $this->controller = $controller;
     }
 
     /**
@@ -35,7 +29,7 @@ class UsersWriteWebService
      */
     public function Create()
     {
-        /** @var $request CreateUserRequest */
+        /** @var CreateUserRequest $request */
         $request = new CreateUserRequest($this->server->GetRequest());
 
         Log::Debug('UsersWriteWebService.Create() User=%s', $this->server->GetSession()->UserId);
@@ -56,7 +50,7 @@ class UsersWriteWebService
             Log::Debug('UsersWriteWebService.Create() - User Create Failed.');
 
             $this->server->WriteResponse(
-                new FailedResponse($this->server, $result->Errors()),
+                new FailedResponse($result->Errors()),
                 RestResponse::BAD_REQUEST_CODE
             );
         }
@@ -72,7 +66,7 @@ class UsersWriteWebService
      */
     public function Update($userId)
     {
-        /** @var $request UpdateUserRequest */
+        /** @var UpdateUserRequest $request */
         $request = new UpdateUserRequest($this->server->GetRequest());
 
         Log::Debug('UsersWriteWebService.Update() User=%s', $this->server->GetSession()->UserId);
@@ -93,7 +87,7 @@ class UsersWriteWebService
             Log::Debug('UsersWriteWebService.Create() - User Update Failed.');
 
             $this->server->WriteResponse(
-                new FailedResponse($this->server, $result->Errors()),
+                new FailedResponse($result->Errors()),
                 RestResponse::BAD_REQUEST_CODE
             );
         }
@@ -123,7 +117,7 @@ class UsersWriteWebService
             Log::Debug('UsersWriteWebService.Delete() - User Delete Failed.');
 
             $this->server->WriteResponse(
-                new FailedResponse($this->server, $result->Errors()),
+                new FailedResponse($result->Errors()),
                 RestResponse::BAD_REQUEST_CODE
             );
         }
@@ -141,7 +135,7 @@ class UsersWriteWebService
     {
         Log::Debug('UsersWriteWebService.UpdatePassword() User=%s', $this->server->GetSession()->UserId);
 
-        /** @var $request UpdateUserPasswordRequest */
+        /** @var UpdateUserPasswordRequest $request */
         $request = new UpdateUserPasswordRequest($this->server->GetRequest());
 
         $result = $this->controller->UpdatePassword($userId, $request->password, $this->server->GetSession());
@@ -157,7 +151,7 @@ class UsersWriteWebService
             Log::Debug('UsersWriteWebService.UpdatePassword() - User Password Update Failed.');
 
             $this->server->WriteResponse(
-                new FailedResponse($this->server, $result->Errors()),
+                new FailedResponse($result->Errors()),
                 RestResponse::BAD_REQUEST_CODE
             );
         }

@@ -1,3 +1,4 @@
+<!-- tpl/Schedule/schedule.tpl -->
 {* All of the slot display formatting *}
 
 {function name=displayPastTime}
@@ -39,7 +40,7 @@
 {* End slot display formatting *}
 
 {block name="header"}
-    {include file='globalheader.tpl' Qtip=true Select2=true cssFiles='scripts/css/jqtree.css,css/schedule.css' printCssFiles='css/schedule.print.css'}
+    {include file='globalheader.tpl' Qtip=true Select2=true DatePicker=true cssFiles='scripts/css/jqtree.css,css/schedule.css' printCssFiles='css/schedule.print.css'}
 {/block}
 
 <div id="page-schedule">
@@ -64,7 +65,7 @@
                     <span id="warning-resources"></span> resources for <span id="warning-days"></span> days.
                     <button type="button" class="close close-forever btn btn-link alert-link"
                         aria-label="Do not show again">
-                        <span aria-hidden="true">Do not show again</span> {*Cadena para traducir*}
+                        <span aria-hidden="true">Do not show again</span>
                     </button>
                 </p>
             </div>
@@ -86,17 +87,23 @@
                             <div class="d-flex align-items-center">
                                 <a href="#" id="print_schedule" class="link-primary me-1" title="{translate key=Print}"><span
                                         class="bi bi-printer"></span></a>
-                                <a href="#" id="make_default" class="link-primary me-2"
-                                    style="display:none;">{*{html_image src="star_boxed_full.png" altKey="MakeDefaultSchedule"}*}<i
+                                <a href="#" id="make_default" class="link-primary me-2" style="display:none;"><i
                                         class="bi bi-star-fill"></i></a>
                                 <a href="#" class="schedule-style me-1" id="schedule_standard"
-                                    schedule-display="{ScheduleStyle::Standard}">{html_image src="table.png" altKey="StandardScheduleDisplay"}</a>
-                                <a href="#" class="schedule-style me-1" id="schedule_tall"
-                                    schedule-display="{ScheduleStyle::Tall}">{html_image src="table-tall.png" altKey="TallScheduleDisplay"}</a>
+                                    schedule-display="{ScheduleStyle::Standard}">
+                                    <img src="img/table.png" alt="{translate key='StandardScheduleDisplay'}" />
+                                </a>
+                                <a href="#" class="schedule-style me-1" id="schedule_tall" schedule-display="{ScheduleStyle::Tall}">
+                                    <img src="img/table-tall.png" alt="{translate key='TallScheduleDisplay'}" />
+                                </a>
                                 <a href="#" class="schedule-style d-none d-md-block me-1" id="schedule_wide"
-                                    schedule-display="{ScheduleStyle::Wide}">{html_image src="table-wide.png" altKey="WideScheduleDisplay"}</a>
+                                    schedule-display="{ScheduleStyle::Wide}">
+                                    <img src="img/table-wide.png" alt="{translate key='WideScheduleDisplay'}" />
+                                </a>
                                 <a href="#" class="schedule-style d-none d-md-block" id="schedule_week"
-                                    schedule-display="{ScheduleStyle::CondensedWeek}">{html_image src="table-week.png" altKey="CondensedWeekScheduleDisplay"}</a>
+                                    schedule-display="{ScheduleStyle::CondensedWeek}">
+                                    <img src="img/table-week.png" alt="{translate key='CondensedWeekScheduleDisplay'}" />
+                                </a>
                             </div>
                             {if isset($SubscriptionUrl) && $SubscriptionUrl != null && $ShowSubscription && $LoggedIn}
                                 <div class="d-flex align-items-center"><i class="bi bi-rss-fill link-primary me-1"></i>
@@ -133,18 +140,17 @@
 
             <div id="individualDates" class="collapse">
                 <div class="d-flex justify-content-center align-items-center mt-2">
-                    <div class="form-check">
+                    <div class="form-check form-switch">
                         <input class="form-check-input" type='checkbox' id='multidateselect' />
                         <label class="form-check-label" for='multidateselect'>{translate key=SpecificDates}</label>
                     </div>
-                    <a class="btn btn-link link-primary" href="#" id="individualDatesGo">
-                        <i class="bi bi-caret-right-fill"></i>
-                        <span class="visually-hidden">{translate key=SpecificDates}</span>
-                    </a>
                 </div>
                 <div class="text-center" id="individualDatesList"></div>
+                <button class="btn btn-sm btn-primary mx-auto" href="#" id="individualDatesGo">
+                    <i class="bi bi-search me-1"></i>{translate key=SpecificDates}
+                </button>
+                <div type="text" id="datepicker" class="collapse"></div>
             </div>
-            <div type="text" id="datepicker" class="collapse"></div>
 
 
 
@@ -215,18 +221,33 @@
             {block name="legend"}
                 <div class="schedule-legend mt-3">
                     <div class="d-none d-sm-flex justify-content-center flex-wrap gap-1 text-center">
-                        <div class="legend reservable border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">{translate key=Reservable}</div>
-                        <div class="legend unreservable border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">{translate key=Unreservable}</div>
-                        <div class="legend reserved border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">{translate key=Reserved}</div>
+                        <div
+                            class="legend reservable border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">
+                            {translate key=Reservable}</div>
+                        <div
+                            class="legend unreservable border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">
+                            {translate key=Unreservable}</div>
+                        <div
+                            class="legend reserved border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">
+                            {translate key=Reserved}</div>
                         {if $LoggedIn}
-                            <div class="legend reserved mine border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">{translate key=MyReservation}
+                            <div
+                                class="legend reserved mine border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">
+                                {translate key=MyReservation}
                             </div>
-                            <div class="legend reserved participating border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">
+                            <div
+                                class="legend reserved participating border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">
                                 {translate key=Participant}</div>
                         {/if}
-                        <div class="legend reserved pending border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">{translate key=Pending}</div>
-                        <div class="legend pasttime border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">{translate key=Past}</div>
-                        <div class="legend restricted border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">{translate key=Restricted}</div>
+                        <div
+                            class="legend reserved pending border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">
+                            {translate key=Pending}</div>
+                        <div
+                            class="legend pasttime border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">
+                            {translate key=Past}</div>
+                        <div
+                            class="legend restricted border border-dark-subtle rounded-2 d-flex align-items-center justify-content-center lh-sm py-1">
+                            {translate key=Restricted}</div>
                     </div>
                 </div>
             {/block}
@@ -382,7 +403,7 @@
 
 <div id="loading-schedule" class="d-none">Loading reservations...</div>
 
-{include file="javascript-includes.tpl" Qtip=true Select2=true Clear=true}
+{include file="javascript-includes.tpl" Qtip=true Select2=true Clear=true DatePicker=true}
 
 {block name="scripts-before"}
 
@@ -410,7 +431,7 @@
         cookieName: "{$CookieName}",
         scheduleId: "{$ScheduleId|escape:'javascript'}",
         scriptUrl: '{$ScriptUrl}',
-        selectedResources: [{','|implode:$ResourceIds}],
+        selectedResources: [{$ResourceIds|join:','}],
         specificDates: [{foreach from=$SpecificDates item=d}'{$d->Format('Y-m-d')}',{/foreach}],
         updateReservationUrl: "{$Path}ajax/reservation_move.php",
         lockTableHead: "{if isset($LockTableHead)}{$LockTableHead}{/if}",
@@ -425,6 +446,7 @@
         autocompleteUrl: "{$Path}ajax/autocomplete.php?type={AutoCompleteType::User}",
         fastReservationLoad: "{$FastReservationLoad}",
         resourceMaxConcurrentReservations,
+        autoScrollToday: {$AutoScrollToday|@json_encode},
     };
 
     const resourceOrder = [];
@@ -457,6 +479,8 @@
 
 {control type="DatePickerSetupControl"
 ControlId='datepicker'
+HasTimepicker=false
+Inline=true
 DefaultDate=$FirstDate
 NumberOfMonths=$PopupMonths
 ShowButtonPanel='true'

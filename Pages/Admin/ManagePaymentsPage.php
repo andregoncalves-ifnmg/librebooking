@@ -23,8 +23,7 @@ interface IManagePaymentsPage extends IActionPage
     public function GetCreditCurrency();
 
     /**
-     * @param float $cost
-     * @param string $currency
+     * @param array $creditCosts
      */
     public function SetCreditCosts($creditCosts);
 
@@ -150,7 +149,7 @@ class ManagePaymentsPage extends ActionPage implements IManagePaymentsPage
 
     public function ProcessPageLoad()
     {
-        $paymentsEnabled = Configuration::Instance()->GetSectionKey(ConfigSection::CREDITS, ConfigKeys::CREDITS_ALLOW_PURCHASE, new BooleanConverter());
+        $paymentsEnabled = Configuration::Instance()->GetKey(ConfigKeys::CREDITS_ALLOW_PURCHASE, new BooleanConverter());
 
         $this->Set('Currencies', \Booked\Currency::Currencies());
         $this->Set('PaymentsEnabled', $paymentsEnabled);

@@ -1,6 +1,7 @@
 <?php
 
 require_once(ROOT_DIR . 'Domain/Access/namespace.php');
+require_once(ROOT_DIR . 'lib/Application/Reservation/Notification/namespace.php');
 
 class GuestParticipationPresenter
 {
@@ -76,7 +77,7 @@ class GuestParticipationPresenter
                     continue;
                 }
 
-                /** @var $instance Reservation */
+                /** @var Reservation $instance */
                 foreach ($series->Instances() as $instance) {
                     $numberOfParticipants = count($instance->Participants()) + count($instance->ParticipatingGuests());
 

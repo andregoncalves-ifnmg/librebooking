@@ -21,7 +21,7 @@ class ManageUsersPresenterTest extends TestBase
     public $resourceRepo;
 
     /**
-     * @var IManageUsersService|PHPUnit_Framework_MockObject_MockObject
+     * @var IManageUsersService|PHPUnit\Framework\MockObject\MockObject
      */
     public $manageUsersService;
 
@@ -41,12 +41,12 @@ class ManageUsersPresenterTest extends TestBase
     public $encryption;
 
     /**
-     * @var IGroupRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var IGroupRepository|PHPUnit\Framework\MockObject\MockObject
      */
     public $groupRepository;
 
     /**
-     * @var IGroupViewRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var IGroupViewRepository|PHPUnit\Framework\MockObject\MockObject
      */
     public $groupViewRepository;
 
@@ -300,7 +300,7 @@ class ManageUsersPresenterTest extends TestBase
         $group = new Group($groupId, 'name');
         $group->AddUser($userId);
 
-        $this->fakeConfig->SetKey(ConfigKeys::LANGUAGE, $lang);
+        $this->fakeConfig->SetKey(ConfigKeys::DEFAULT_LANGUAGE, $lang);
 
         $this->page->_FirstName = $fname;
         $this->page->_LastName = $lname;
@@ -674,16 +674,19 @@ class FakeManageUsersPage extends FakeActionPageBase implements IManageUsersPage
     public function GetReservationColor()
     {
         // TODO: Implement GetReservationColor() method.
+        return null;
     }
 
     public function GetValue()
     {
         // TODO: Implement GetValue() method.
+        return null;
     }
 
     public function GetName()
     {
         // TODO: Implement GetName() method.
+        return null;
     }
 
     public function ShowTemplateCSV($attributes)
@@ -694,6 +697,7 @@ class FakeManageUsersPage extends FakeActionPageBase implements IManageUsersPage
     public function GetImportFile()
     {
         // TODO: Implement GetImportFile() method.
+        return null;
     }
 
     public function SetImportResult($importResult)
@@ -704,6 +708,7 @@ class FakeManageUsersPage extends FakeActionPageBase implements IManageUsersPage
     public function GetInvitedEmails()
     {
         // TODO: Implement GetInvitedEmails() method.
+        return null;
     }
 
     public function ShowExportCsv()
@@ -724,11 +729,13 @@ class FakeManageUsersPage extends FakeActionPageBase implements IManageUsersPage
     public function SendEmailNotification()
     {
         // TODO: Implement SendEmailNotification() method.
+        return null;
     }
 
     public function GetUpdateOnImport()
     {
         // TODO: Implement GetUpdateOnImport() method.
+        return null;
     }
 
     public function ShowUserUpdate(User $user, $attributes)

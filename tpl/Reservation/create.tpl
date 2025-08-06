@@ -460,7 +460,7 @@
                                 <input type="hidden" class="name" value="{$accessory->GetName()}" />
                                 <input type="hidden" class="id" value="{$accessory->GetId()}" />
                                 <input type="hidden" class="resource-ids"
-                                    value="{','|implode:$accessory->ResourceIds()}" />
+                                    value="{$accessory->ResourceIds()|join:','}" />
                                 <label for="accessory{$accessory->GetId()}"
                                     class="visually-hidden">{$accessory->GetName()}</label>
                                 {if $accessory->GetQuantityAvailable() == 1}
@@ -525,14 +525,13 @@
 
 {block name=extras}{/block}
 
-{include file="javascript-includes.tpl" Qtip=false Owl=false}
+{include file="javascript-includes.tpl" Qtip=false}
 
 {control type="DatePickerSetupControl" ControlId="BeginDate" AltId="formattedBeginDate" DefaultDate=$StartDate MinDate=$AvailabilityStart MaxDate=$AvailabilityEnd FirstDay=$FirstWeekday}
 {control type="DatePickerSetupControl" ControlId="EndDate" AltId="formattedEndDate" DefaultDate=$EndDate MinDate=$AvailabilityStart MaxDate=$AvailabilityEnd FirstDay=$FirstWeekday}
 {control type="DatePickerSetupControl" ControlId="EndRepeat" AltId="formattedEndRepeat" DefaultDate=$RepeatTerminationDate MinDate=$StartDate MaxDate=$AvailabilityEnd FirstDay=$FirstWeekday}
 {control type="DatePickerSetupControl" ControlId="RepeatDate" AltId="formattedRepeatDate" MaxDate=$AvailabilityEnd FirstDay=$FirstWeekday MinDate=Date::Now()->ToTimezone($Timezone)}
 
-{jsfile src="js/jquery.autogrow.js"}
 {jsfile src="js/moment.min.js"}
 {jsfile src="resourcePopup.js"}
 {jsfile src="userPopup.js"}
@@ -643,7 +642,6 @@
             return false;
         });
 
-        $('#description').autogrow();
         $('#userName').bindUserDetails();
 
         // jsPDF

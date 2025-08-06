@@ -27,17 +27,17 @@ class ReservationSavePresenterTest extends TestBase
     private $presenter;
 
     /**
-     * @var IReservationPersistenceService|PHPUnit_Framework_MockObject_MockObject
+     * @var IReservationPersistenceService|PHPUnit\Framework\MockObject\MockObject
      */
     private $persistenceService;
 
     /**
-     * @var IReservationHandler|PHPUnit_Framework_MockObject_MockObject
+     * @var IReservationHandler|PHPUnit\Framework\MockObject\MockObject
      */
     private $handler;
 
     /**
-     * @var IResourceRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var IResourceRepository|PHPUnit\Framework\MockObject\MockObject
      */
     private $resourceRepository;
 
@@ -77,7 +77,7 @@ class ReservationSavePresenterTest extends TestBase
 
     public function testCreationBuildsReservationFromPageData()
     {
-        $this->fakeConfig->SetSectionKey(ConfigSection::CREDITS, ConfigKeys::CREDITS_ENABLED, 'true');
+        $this->fakeConfig->SetKey(ConfigKeys::CREDITS_ENABLED, 'true');
         $timezone = $this->user->Timezone;
 
         $userId = $this->page->GetUserId();

@@ -34,7 +34,7 @@ class ReservationMovePresenterTest extends TestBase
     private $presenter;
 
     /**
-     * @var IResourceRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var IResourceRepository|PHPUnit\Framework\MockObject\MockObject
      */
     private $resourceRepository;
 
@@ -239,6 +239,7 @@ class FakeReservationMovePage implements IReservationMovePage
     public function GetRetryParameters()
     {
         // TODO: Implement GetRetryParameters() method.
+        return null;
     }
 
     /**

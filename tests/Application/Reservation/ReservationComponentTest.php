@@ -17,27 +17,27 @@ class ReservationComponentTest extends TestBase
     private $scheduleRepository;
 
     /**
-     * @var IAttributeRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var IAttributeRepository|PHPUnit\Framework\MockObject\MockObject
      */
     private $attributeRepository;
 
     /**
-     * @var IUserRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var IUserRepository|PHPUnit\Framework\MockObject\MockObject
      */
     private $userRepository;
 
     /**
-     * @var IResourceService|PHPUnit_Framework_MockObject_MockObject
+     * @var IResourceService|PHPUnit\Framework\MockObject\MockObject
      */
     private $resourceService;
 
     /**
-     * @var IReservationAuthorization|PHPUnit_Framework_MockObject_MockObject
+     * @var IReservationAuthorization|PHPUnit\Framework\MockObject\MockObject
      */
     private $reservationAuthorization;
 
     /**
-     * @var IReservationComponentInitializer|PHPUnit_Framework_MockObject_MockObject
+     * @var IReservationComponentInitializer|PHPUnit\Framework\MockObject\MockObject
      */
     private $initializer;
 
@@ -47,7 +47,7 @@ class ReservationComponentTest extends TestBase
     private $reservationDetailsBinder;
 
     /**
-     * @var IExistingReservationPage|PHPUnit_Framework_MockObject_MockObject
+     * @var IExistingReservationPage|PHPUnit\Framework\MockObject\MockObject
      */
     private $page;
 
@@ -57,7 +57,7 @@ class ReservationComponentTest extends TestBase
     private $reservationView;
 
     /**
-     * @var IPrivacyFilter|PHPUnit_Framework_MockObject_MockObject
+     * @var IPrivacyFilter|PHPUnit\Framework\MockObject\MockObject
      */
     private $privacyFilter;
 
@@ -109,7 +109,7 @@ class ReservationComponentTest extends TestBase
                                        ->with($this->fakeUser)
                                        ->willReturn(true);
 
-        $this->fakeConfig->SetSectionKey(ConfigSection::PRIVACY, ConfigKeys::PRIVACY_HIDE_USER_DETAILS, 'true');
+        $this->fakeConfig->SetKey(ConfigKeys::PRIVACY_HIDE_USER_DETAILS, 'true');
         $this->initializer->expects($this->once())
                           ->method('SetShowParticipation')
                           ->with($this->equalTo(false));
@@ -713,7 +713,7 @@ class ReservationComponentTest extends TestBase
 
     public function testCheckInIsRequiredIfAtLeastOneResourceRequiresIt_And_ReservationIsNotCheckedIn_And_WithinCheckinWindow()
     {
-        $this->fakeConfig->SetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_CHECKIN_MINUTES, 5);
+        $this->fakeConfig->SetKey(ConfigKeys::RESERVATION_CHECKIN_MINUTES_PRIOR, 5);
 
         $page = new FakeExistingReservationPage();
         $this->reservationView->StartDate = Date::Now()->AddMinutes(4);
@@ -746,7 +746,7 @@ class ReservationComponentTest extends TestBase
 
     public function testCheckInNotRequiredIfCheckedIn()
     {
-        $this->fakeConfig->SetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_CHECKIN_MINUTES, 5);
+        $this->fakeConfig->SetKey(ConfigKeys::RESERVATION_CHECKIN_MINUTES_PRIOR, 5);
 
         $page = new FakeExistingReservationPage();
         $this->reservationView->StartDate = Date::Now()->AddMinutes(4);

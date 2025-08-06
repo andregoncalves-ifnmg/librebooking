@@ -9,7 +9,7 @@ require_once(ROOT_DIR . 'WebServices/Requests/SignOutRequest.php');
 class SignedOutResponse extends RestResponse
 {
     /**
-     * @var bool;
+     * @var bool
      */
     public $signedOut;
 }
@@ -25,11 +25,13 @@ class AuthenticationWebService
      * @var IWebServiceAuthentication
      */
     private $authentication;
+    private int|string|null $api_access_group_id;  // If specified and user not in group then authentication will be denied
 
-    public function __construct(IRestServer $server, IWebServiceAuthentication $authentication)
+    public function __construct(IRestServer $server, IWebServiceAuthentication $authentication, int|string|null $api_access_group_id = null)
     {
         $this->server = $server;
         $this->authentication = $authentication;
+        $this->api_access_group_id = $api_access_group_id;
     }
 
     /**
@@ -41,7 +43,7 @@ class AuthenticationWebService
      */
     public function Authenticate()
     {
-        /** @var $request AuthenticationRequest */
+        /** @var AuthenticationRequest $request */
         $request = $this->server->GetRequest();
         $username = $request->username;
         $password = $request->password;
@@ -51,6 +53,15 @@ class AuthenticationWebService
         $isValid = $this->authentication->Validate($username, $password);
         if ($isValid) {
             Log::Debug('WebService Authenticate, user %s was authenticated', $username);
+            $session = $this->authentication->Login($username);
+
+            if (!$session->IsAdmin && is_numeric($this->api_access_group_id)) {
+                if (!UserGroupHelper::isUserInGroup(groupId: $this->api_access_group_id, userId: $session->UserId)) {
+                    Log::Debug('WebService Authenticate, user %s was denied API access', $username);
+                    $this->server->WriteResponse(AuthenticationResponse::NotAuthorized(), statusCode: RestResponse::FORBIDDEN);
+                    return;
+                }
+            }
 
             $version = 0;
             $reader = ServiceLocator::GetDatabase()->Query(new GetVersionCommand());
@@ -59,7 +70,6 @@ class AuthenticationWebService
             }
             $reader->Free();
 
-            $session = $this->authentication->Login($username);
             Log::Debug('SessionToken=%s', $session->SessionToken);
             $this->server->WriteResponse(AuthenticationResponse::Success($this->server, $session, $version));
         } else {
@@ -76,7 +86,7 @@ class AuthenticationWebService
      */
     public function SignOut()
     {
-        /** @var $request SignOutRequest */
+        /** @var SignOutRequest $request */
         $request = $this->server->GetRequest();
         $userId = $request->userId;
         $sessionToken = $request->sessionToken;

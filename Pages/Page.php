@@ -10,7 +10,8 @@ require_once(ROOT_DIR . 'Pages/Pages.php');
 require_once(ROOT_DIR . 'lib/Common/namespace.php');
 require_once(ROOT_DIR . 'lib/Server/namespace.php');
 require_once(ROOT_DIR . 'lib/Config/namespace.php');
-require_once(ROOT_DIR . 'lib/external/MobileDetect/Mobile_Detect.php');
+
+use Detection\MobileDetect;
 
 abstract class Page implements IPage
 {
@@ -69,7 +70,7 @@ abstract class Page implements IPage
         $this->smarty->assign('CanViewResourceAdmin', $userSession->IsResourceAdmin);
         $this->smarty->assign('CanViewScheduleAdmin', $userSession->IsScheduleAdmin);
         $this->smarty->assign('CanViewResponsibilities', !$userSession->IsAdmin && ($userSession->IsGroupAdmin || $userSession->IsResourceAdmin || $userSession->IsScheduleAdmin));
-        $allowAllUsersToReports = Configuration::Instance()->GetSectionKey(ConfigSection::REPORTS, ConfigKeys::REPORTS_ALLOW_ALL, new BooleanConverter());
+        $allowAllUsersToReports = Configuration::Instance()->GetKey(ConfigKeys::REPORTS_ALLOW_ALL_USERS, new BooleanConverter());
         $this->smarty->assign('CanViewReports', ($allowAllUsersToReports || $userSession->IsAdmin || $userSession->IsGroupAdmin || $userSession->IsResourceAdmin || $userSession->IsScheduleAdmin));
 
         $timeout = Configuration::Instance()->GetKey(ConfigKeys::INACTIVITY_TIMEOUT);
@@ -78,15 +79,15 @@ abstract class Page implements IPage
         }
         $this->smarty->assign('ShouldLogout', $this->GetShouldAutoLogout());
         $this->smarty->assign('CssExtensionFile', Configuration::Instance()->GetKey(ConfigKeys::CSS_EXTENSION_FILE));
-        $this->smarty->assign('UseLocalJquery', Configuration::Instance()->GetKey(ConfigKeys::USE_LOCAL_JS, new BooleanConverter()));
-        $this->smarty->assign('EnableConfigurationPage', Configuration::Instance()->GetSectionKey(ConfigSection::PAGES, ConfigKeys::PAGES_ENABLE_CONFIGURATION, new BooleanConverter()));
-        $this->smarty->assign('ShowParticipation', !Configuration::Instance()->GetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_PREVENT_PARTICIPATION, new BooleanConverter()));
-        $this->smarty->assign('CreditsEnabled', Configuration::Instance()->GetSectionKey(ConfigSection::CREDITS, ConfigKeys::CREDITS_ENABLED, new BooleanConverter()));
-        $this->smarty->assign('PaymentsEnabled', Configuration::Instance()->GetSectionKey(ConfigSection::CREDITS, ConfigKeys::CREDITS_ALLOW_PURCHASE, new BooleanConverter()));
-        $this->smarty->assign('EmailEnabled', Configuration::Instance()->GetKey(ConfigKeys::ENABLE_EMAIL, new BooleanConverter()));
+        $this->smarty->assign('UseLocalJquery', Configuration::Instance()->GetKey(ConfigKeys::USE_LOCAL_JS_LIBS, new BooleanConverter()));
+        $this->smarty->assign('EnableConfigurationPage', Configuration::Instance()->GetKey(ConfigKeys::PAGES_CONFIGURATION_ENABLED, new BooleanConverter()));
+        $this->smarty->assign('ShowParticipation', !Configuration::Instance()->GetKey(ConfigKeys::RESERVATION_PREVENT_PARTICIPATION, new BooleanConverter()));
+        $this->smarty->assign('CreditsEnabled', Configuration::Instance()->GetKey(ConfigKeys::CREDITS_ENABLED, new BooleanConverter()));
+        $this->smarty->assign('PaymentsEnabled', Configuration::Instance()->GetKey(ConfigKeys::CREDITS_ALLOW_PURCHASE, new BooleanConverter()));
+        $this->smarty->assign('EmailEnabled', Configuration::Instance()->GetKey(ConfigKeys::EMAIL_ENABLED, new BooleanConverter()));
 
-        $this->smarty->assign('checkinAdminOnly', Configuration::Instance()->GetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_CHECKIN_ADMIN_ONLY, new BooleanConverter()));
-        $this->smarty->assign('checkoutAdminOnly', Configuration::Instance()->GetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_CHECKOUT_ADMIN_ONLY, new BooleanConverter()));
+        $this->smarty->assign('checkinAdminOnly', Configuration::Instance()->GetKey(ConfigKeys::RESERVATION_CHECKIN_ADMIN_ONLY, new BooleanConverter()));
+        $this->smarty->assign('checkoutAdminOnly', Configuration::Instance()->GetKey(ConfigKeys::RESERVATION_CHECKOUT_ADMIN_ONLY, new BooleanConverter()));
 
         $this->smarty->assign('cssTheme', (Configuration::Instance()->GetKey(ConfigKeys::CSS_THEME) ?? 'default'));
 
@@ -131,15 +132,22 @@ abstract class Page implements IPage
         }
         $this->smarty->assign('HomeUrl', $logoUrl);
 
-        $detect = new Mobile_Detect();
-        $this->IsMobile = $detect->isMobile();
-        $this->IsTablet = $detect->isTablet();
+        $loadMobileViews = Configuration::Instance()->GetKey(ConfigKeys::SCHEDULE_LOAD_MOBILE_VIEWS, new BooleanConverter()) ?? true;
+
+        if ($loadMobileViews) {
+            $detect = new MobileDetect();
+            $this->IsMobile = $detect->isMobile();
+            $this->IsTablet = $detect->isTablet();
+        }
+
         $this->IsDesktop = !$this->IsMobile && !$this->IsTablet;
-        $this->Set('IsMobile', $this->IsMobile);
-        $this->Set('IsTablet', $this->IsTablet);
-        $this->Set('IsDesktop', $this->IsDesktop);
-        $this->Set('GoogleAnalyticsTrackingId', Configuration::Instance()->GetSectionKey(ConfigSection::GOOGLE_ANALYTICS, ConfigKeys::GOOGLE_ANALYTICS_TRACKING_ID));
+        $this->Set('IsMobile', (bool) $this->IsMobile);
+        $this->Set('IsTablet', (bool) $this->IsTablet);
+        $this->Set('IsDesktop', (bool) $this->IsDesktop);
+        $this->Set('GoogleAnalyticsTrackingId', Configuration::Instance()->GetKey(ConfigKeys::GOOGLE_ANALYTICS_TRACKING_ID));
         $this->Set('ShowNewVersion', $this->ShouldShowNewVersion());
+
+        $this->Set('AutoScrollToday', Configuration::Instance()->GetKey(ConfigKeys::SCHEDULE_AUTO_SCROLL_TODAY, new BooleanConverter()) ?? true);
     }
 
     protected function SetTitle($title)
@@ -403,7 +411,7 @@ abstract class Page implements IPage
      */
     protected function DisplayLocalized($templateName)
     {
-        $languageCode = $this->GetVar('CurrentLanguage');        
+        $languageCode = $this->GetVar('CurrentLanguage');
         $localizedPath = ROOT_DIR . 'lang/' . $languageCode;
         $defaultPath = ROOT_DIR . 'lang/en_us/';
 
@@ -431,12 +439,12 @@ abstract class Page implements IPage
     private function SetSecurityHeaders()
     {
         $config = Configuration::Instance();
-        if ($config->GetSectionKey(ConfigSection::SECURITY, ConfigKeys::SECURITY_HEADERS, new BooleanConverter())) {
-            header('Strict-Transport-Security: ' . $config->GetSectionKey(ConfigSection::SECURITY, ConfigKeys::SECURITY_STRICT_TRANSPORT));
-            header('X-Frame-Options: ' . $config->GetSectionKey(ConfigSection::SECURITY, ConfigKeys::SECURITY_X_FRAME));
-            header('X-XSS-Protection: ' . $config->GetSectionKey(ConfigSection::SECURITY, ConfigKeys::SECURITY_X_XSS));
-            header('X-Content-Type-Options: ' . $config->GetSectionKey(ConfigSection::SECURITY, ConfigKeys::SECURITY_X_CONTENT_TYPE));
-            header('Content-Security-Policy: ' . $config->GetSectionKey(ConfigSection::SECURITY, ConfigKeys::SECURITY_CONTENT_SECURITY_POLICY));
+        if ($config->GetKey(ConfigKeys::SECURITY_HEADERS, new BooleanConverter())) {
+            header('Strict-Transport-Security: ' . $config->GetKey(ConfigKeys::SECURITY_STRICT_TRANSPORT));
+            header('X-Frame-Options: ' . $config->GetKey(ConfigKeys::SECURITY_X_FRAME));
+            header('X-XSS-Protection: ' . $config->GetKey(ConfigKeys::SECURITY_X_XSS));
+            header('X-Content-Type-Options: ' . $config->GetKey(ConfigKeys::SECURITY_X_CONTENT_TYPE));
+            header('Content-Security-Policy: ' . $config->GetKey(ConfigKeys::SECURITY_CONTENT_SECURITY_POLICY));
         }
     }
 

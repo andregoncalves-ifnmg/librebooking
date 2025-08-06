@@ -165,7 +165,7 @@ abstract class CommonCalendarPage extends ActionPage implements ICommonCalendarP
         $this->Set('DayName', $days[$displayDate->Weekday()]);
         $this->Set('DayNames', $days);
         $this->Set('DayNamesShort', Resources::GetInstance()->GetDays('abbr'));
-        $this->Set('ShowWeekNumbers', Configuration::Instance()->GetSectionKey(ConfigSection::SCHEDULE, ConfigKeys::SCHEDULE_SHOW_WEEK_NUMBERS, new BooleanConverter()));
+        $this->Set('ShowWeekNumbers', Configuration::Instance()->GetKey(ConfigKeys::SCHEDULE_SHOW_WEEK_NUMBERS, new BooleanConverter()));
     }
 
     /**
@@ -317,7 +317,6 @@ abstract class CommonCalendarPresenter extends ActionPresenter
 
     public function __construct(
         ICommonCalendarPage $page,
-        ICalendarFactory $calendarFactory,
         IReservationViewRepository $reservationRepository,
         IScheduleRepository $scheduleRepository,
         IUserRepository $userRepository,
@@ -372,7 +371,7 @@ abstract class CommonCalendarPresenter extends ActionPresenter
             $selectedGroup = $resourceGroups->GetGroup($selectedGroupId);
             $this->page->BindSelectedGroup($selectedGroup);
 
-            /** @var ResourceDTO $resource */
+            /** @var ResourceDto $resource */
             foreach ($resources as $resource) {
                 if (in_array($resource->GetId(), $resourceIds)) {
                     $tempResources[] = $resource;
@@ -431,7 +430,7 @@ abstract class CommonCalendarPresenter extends ActionPresenter
 
     protected function GetAllResources($userSession)
     {
-        $showInaccessible = Configuration::Instance()->GetSectionKey(ConfigSection::SCHEDULE, ConfigKeys::SCHEDULE_SHOW_INACCESSIBLE_RESOURCES, new BooleanConverter());
+        $showInaccessible = Configuration::Instance()->GetKey(ConfigKeys::SCHEDULE_SHOW_INACCESSIBLE_RESOURCES, new BooleanConverter());
         $resources = $this->resourceService->GetAllResources($showInaccessible, $userSession);
 
         return $resources;
@@ -450,7 +449,7 @@ abstract class CommonCalendarPresenter extends ActionPresenter
 
         $default = new NullSchedule();
 
-        /** @var $schedule Schedule */
+        /** @var Schedule $schedule */
         foreach ($schedules as $schedule) {
             if (!empty($scheduleId) && $schedule->GetId() == $scheduleId) {
                 return $schedule;

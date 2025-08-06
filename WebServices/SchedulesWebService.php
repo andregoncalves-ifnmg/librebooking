@@ -16,7 +16,7 @@ class SchedulesWebService
     private $server;
 
     /**
-     * @var IScheduleRepositorRCOI
+     * @var IScheduleRepository
      */
     private $scheduleRepository;
 
@@ -145,6 +145,7 @@ class ScheduleWebServicePageBuilder extends SchedulePageBuilder
     public function GetGroupId($scheduleId, ISchedulePage $page)
     {
         // no op
+        return 0;
     }
 
     public function GetResourceIds($scheduleId, ISchedulePage $page)
@@ -169,11 +170,6 @@ class ScheduleWebServicePageBuilder extends SchedulePageBuilder
 class ScheduleWebServiceView implements ISchedulePage
 {
     /**
-     * @var int
-     */
-    private $scheduleId;
-
-    /**
      * @var IDailyLayout
      */
     private $dailyLayout;
@@ -192,11 +188,6 @@ class ScheduleWebServiceView implements ISchedulePage
      * @var ResourceDto[]
      */
     private $resources;
-
-    /**
-     * @var int
-     */
-    private $resourceId;
 
     /**
      * @var Date
@@ -218,11 +209,13 @@ class ScheduleWebServiceView implements ISchedulePage
      */
     private $allowConcurrentReservations;
 
-    public function __construct($scheduleId, $startDate, $resourceId)
+    /**
+     * @param int $scheduleId
+     * @param int $resourceId
+     */
+    public function __construct(private $scheduleId, $startDate, private $resourceId)
     {
-        $this->scheduleId = $scheduleId;
         $this->startDate = $startDate;
-        $this->resourceId = $resourceId;
     }
 
     public function SetSchedules($schedules)
@@ -311,6 +304,7 @@ class ScheduleWebServiceView implements ISchedulePage
     public function GetLayoutDate()
     {
         // TODO: Implement GetLayoutDate() method.
+        return '';
     }
 
     public function GetScheduleStyle($scheduleId)

@@ -12,7 +12,7 @@ class ScheduleSlotResponse extends RestResponse
      */
     public $resources;
 
-    public function __construct(IRestServer $server, Date $date)
+    public function __construct(Date $date)
     {
         $this->date = $date->ToIso();
     }
@@ -129,10 +129,6 @@ class ScheduleSlotResourceResponse extends RestResponse
 class ScheduleSlotsResponse extends RestResponse
 {
     public $dates = [];
-    /**
-     * @var int
-     */
-    private $scheduleId;
 
     /**
      * @param IRestServer $server
@@ -142,13 +138,12 @@ class ScheduleSlotsResponse extends RestResponse
      * @param ResourceDto[] $resources
      * @param IPrivacyFilter $privacyFilter
      */
-    public function __construct(IRestServer $server, $scheduleId, IDailyLayout $dailyLayout, DateRange $dates, $resources, IPrivacyFilter $privacyFilter)
+    public function __construct(IRestServer $server, private $scheduleId, IDailyLayout $dailyLayout, DateRange $dates, $resources, IPrivacyFilter $privacyFilter)
     {
-        $this->scheduleId = $scheduleId;
-        $this->AddService($server, WebServices::GetSchedule, [WebServiceParams::ScheduleId => $scheduleId]);
+        $this->AddService($server, WebServices::GetSchedule, [WebServiceParams::ScheduleId => $this->scheduleId]);
 
         foreach ($dates->Dates() as $date) {
-            $scheduleDate = new ScheduleSlotResponse($server, $date);
+            $scheduleDate = new ScheduleSlotResponse($date);
 
             foreach ($resources as $resource) {
                 $scheduleResource = new ScheduleSlotResourceResponse($server, $resource, $privacyFilter);

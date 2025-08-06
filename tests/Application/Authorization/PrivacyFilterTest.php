@@ -10,7 +10,7 @@ class PrivacyFilterTest extends TestBase
     private $privacyFilter;
 
     /**
-     * @var IReservationAuthorization|PHPUnit_Framework_MockObject_MockObject
+     * @var IReservationAuthorization|PHPUnit\Framework\MockObject\MockObject
      */
     private $reservationAuthorization;
 
@@ -193,11 +193,11 @@ class PrivacyFilterTest extends TestBase
 
     private function hideUserDetails($hide)
     {
-        $this->fakeConfig->SetSectionKey(ConfigSection::PRIVACY, ConfigKeys::PRIVACY_HIDE_USER_DETAILS, $hide);
+        $this->fakeConfig->SetKey(ConfigKeys::PRIVACY_HIDE_USER_DETAILS, $hide);
     }
 
     private function hideReservationDetails($hide)
     {
-        $this->fakeConfig->SetSectionKey(ConfigSection::PRIVACY, ConfigKeys::PRIVACY_HIDE_RESERVATION_DETAILS, $hide);
+        $this->fakeConfig->SetKey(ConfigKeys::PRIVACY_HIDE_RESERVATION_DETAILS, $hide);
     }
 }

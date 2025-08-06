@@ -5,7 +5,7 @@ require_once(ROOT_DIR . 'Presenters/Reservation/ReservationAttributesPresenter.p
 class ReservationAttributesPresenterTest extends TestBase
 {
     /**
-     * @var IAttributeService|PHPUnit_Framework_MockObject_MockObject
+     * @var IAttributeService|PHPUnit\Framework\MockObject\MockObject
      */
     private $attributeService;
 
@@ -35,7 +35,7 @@ class ReservationAttributesPresenterTest extends TestBase
     private $presenter;
 
     /**
-     * @var IAttributeRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var IAttributeRepository|PHPUnit\Framework\MockObject\MockObject
      */
     private $attributeRepository;
 
@@ -43,7 +43,7 @@ class ReservationAttributesPresenterTest extends TestBase
     {
         parent::setup();
 
-        $this->fakeConfig->SetSectionKey(ConfigSection::PRIVACY, ConfigKeys::PRIVACY_VIEW_RESERVATIONS, true);
+        $this->fakeConfig->SetKey(ConfigKeys::PRIVACY_VIEW_RESERVATIONS, true);
         $this->page = new FakeReservationAttributesPage();
 
         $this->attributeRepository = $this->createMock('IAttributeRepository');
@@ -259,5 +259,6 @@ class FakeReservationAttributesPage implements IReservationAttributesPage
     public function GetRequestedResourceIds()
     {
         // TODO: Implement GetRequestedResourceIds() method.
+        return null;
     }
 }

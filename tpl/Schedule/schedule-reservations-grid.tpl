@@ -1,8 +1,12 @@
+<!-- schedule-reservations-grid.tpl -->
 {function name=displaySlot}
     {call name=$DisplaySlotFactory->GetFunction($Slot, $AccessAllowed) Slot=$Slot Href=$Href SlotRef=$SlotRef ResourceId=$ResourceId}
 {/function}
 
 {assign var=TodaysDate value=Date::Now()}
+{* Is this a view page and guests are allowed to book *}
+{assign var=GuestViewBookable value=($LoadViewOnly && $AllowGuestBooking)}
+<br/>
 {foreach from=$BoundDates item=date}
     {assign var=ts value=$date->Timestamp()}
     {$periods.$ts = $DailyLayout->GetPeriods($date, true)}
@@ -32,7 +36,7 @@
                 <tr class="slots" data-resourceid="{$resource->GetId()}">
                     <td class="resourcename"
                         {if $resource->HasColor()}style="background-color:{$resource->GetColor()} !important" {/if}>
-                        {if $resource->CanAccess && $DailyLayout->IsDateReservable($date)}
+                        {if ($resource->CanBook || $GuestViewBookable) && $DailyLayout->IsDateReservable($date)}
                             <span resourceId="{$resourceId}"
                                 class="d-sm-inline-block d-md-none resourceNameSelector bi bi-info-circle-fill"
                                 data-show-event="click"
@@ -48,7 +52,7 @@
                     </td>
                     {foreach from=$slots.$ts item=Slot}
                         {assign var=slotRef value="{$Slot->BeginDate()->Format('YmdHis')}{$resourceId}"}
-                        {displaySlot Slot=$Slot Href="$href" AccessAllowed=$resource->CanAccess SlotRef=$slotRef ResourceId=$resourceId}
+                        {displaySlot Slot=$Slot Href="$href" AccessAllowed=($resource->CanBook || $GuestViewBookable) SlotRef=$slotRef ResourceId=$resourceId}
                     {/foreach}
                 </tr>
             {/foreach}

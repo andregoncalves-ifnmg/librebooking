@@ -1,4 +1,4 @@
-name: Lint and analyse php files
+name: Linters
 
 # If a pull-request is pushed then cancel all previously running jobs related
 # to that pull-request
@@ -17,11 +17,39 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5.4.0
+        with:
+          python-version: "3.13"
+      - run: pip install --upgrade tox
+      - name: Run commitizen (https://commitizen-tools.github.io/commitizen/)
+        run: tox -e cz
+      - name: Run config-check
+        run: tox -e config-check
+
+  markdownlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: markdownlint-cli2-action
+        uses: DavidAnson/markdownlint-cli2-action@v20
+        with:
+          config: 'docs/.markdownlint.yml'
+          globs: |
+            *.md
+
   phpunit:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ["8.2", "8.3"]
+        php-version: ["8.2", "8.3", "8.4"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -44,17 +72,35 @@ jobs:
           # Ignore zip for php-webdriver/webdriver
           composer-options: "--ignore-platform-req=ext-zip"
 
-      - name: Create config.php for unit tests
+      - name: Create main config.php for unit tests
         run: cp config/config.dist.php config/config.php
 
+      - name: Create plugin config.php for unit tests
+        run: |
+          for source in $(find plugins -type f -name "*dist*"); do
+            target=$(echo "${source}" | sed -e "s/.dist//")
+            if ! [ -f "config/$(basename ${target})" ]; then
+              cp --no-clobber "${source}" "config/$(basename ${target})"
+              sudo chown www-data:www-data "config/$(basename ${target})"
+            fi
+            if ! [ -f ${target} ]; then
+              ln -s "config/$(basename ${target})" "${target}"
+            fi
+          done
+
       - name: Unit Tests
-        run: composer phpunit
+        run: |
+          composer phpunit | tee phpunit.log
+           if ! grep -qE "Tests:|OK \(" phpunit.log; then
+            echo "❌ PHPUnit exited early (no summary line found)"
+            exit 1
+          fi
 
   lint-php-files:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ["8.1"]
+        php-version: ["8.2", "8.3", "8.4"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -64,17 +110,17 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
 
-      # TODO: Enable this after resolving issues
-      # - name: Validate composer.json and composer.lock
-      #   run: composer validate --strict
-
       - name: Install Composer dependencies
-        # Allow the previous check to fail but not abort
-        if: always()
         uses: ramsey/composer-install@v2
         with:
           # Ignore zip for php-webdriver/webdriver
           composer-options: "--ignore-platform-reqs"
+
+      - name: Update the composer.lock file
+        run: composer update
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
 
       # TODO: Enable this after resolving issues
       # - name: Cache coding-standard
@@ -86,8 +132,6 @@ jobs:
       #     key: phpcs-cache
 
       - name: Lint PHP files
-        # Allow the previous check to fail but not abort
-        if: always()
         run: ./ci/ci-phplint
 
       # TODO: Enable this after resolving issues
@@ -96,28 +140,27 @@ jobs:
       #   if: always()
       #   run: composer phpcs
 
-# TODO: Enable this after resolving issues
-#  analyse-php:
-#    runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        php-version: ["8.1"]
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#
-#      - name: Set up PHP ${{ matrix.php-version }}
-#        uses: shivammathur/setup-php@v2
-#        with:
-#          php-version: ${{ matrix.php-version }}
+  analyse-php:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: ["8.4"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
 #          extensions: mbstring, iconv, mysqli, zip, gd, bz2
-#
-#      - name: Install Composer dependencies
-#        uses: ramsey/composer-install@v2
-#
-#      - name: Analyse files with PHPStan
-#        run: composer phpstan -- --memory-limit 2G
-#
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
+
+      - name: Analyse files with PHPStan
+        run: composer phpstan -- --memory-limit 2G
+
 #      - name: Analyse files with Psalm
 #        # Allow the previous check to fail but not abort
 #        if: always()

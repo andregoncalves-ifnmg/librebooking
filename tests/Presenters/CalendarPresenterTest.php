@@ -6,7 +6,7 @@ require_once(ROOT_DIR . 'Presenters/Calendar/CalendarPresenter.php');
 class CalendarPresenterTest extends TestBase
 {
     /**
-     * @var ICommonCalendarPage|PHPUnit_Framework_MockObject_MockObject
+     * @var ICommonCalendarPage|PHPUnit\Framework\MockObject\MockObject
      */
     private $page;
 
@@ -16,17 +16,17 @@ class CalendarPresenterTest extends TestBase
     private $presenter;
 
     /**
-     * @var IReservationViewRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var IReservationViewRepository|PHPUnit\Framework\MockObject\MockObject
      */
     private $repository;
 
     /**
-     * @var ICalendarFactory|PHPUnit_Framework_MockObject_MockObject
+     * @var ICalendarFactory|PHPUnit\Framework\MockObject\MockObject
      */
     private $calendarFactory;
 
     /**
-     * @var IScheduleRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var IScheduleRepository|PHPUnit\Framework\MockObject\MockObject
      */
     private $scheduleRepository;
 
@@ -36,12 +36,12 @@ class CalendarPresenterTest extends TestBase
     private $userRepository;
 
     /**
-     * @var IResourceService|PHPUnit_Framework_MockObject_MockObject
+     * @var IResourceService|PHPUnit\Framework\MockObject\MockObject
      */
     private $resourceService;
 
     /**
-     * @var ICalendarSubscriptionService|PHPUnit_Framework_MockObject_MockObject
+     * @var ICalendarSubscriptionService|PHPUnit\Framework\MockObject\MockObject
      */
     private $subscriptionService;
 
@@ -65,7 +65,6 @@ class CalendarPresenterTest extends TestBase
 
         $this->presenter = new CalendarPresenter(
             $this->page,
-            $this->calendarFactory,
             $this->repository,
             $this->scheduleRepository,
             $this->userRepository,
@@ -79,7 +78,7 @@ class CalendarPresenterTest extends TestBase
     public function testBindsDefaultScheduleByMonthWhenNothingSelected()
     {
         $showInaccessible = true;
-        $this->fakeConfig->SetSectionKey(ConfigSection::SCHEDULE, ConfigKeys::SCHEDULE_SHOW_INACCESSIBLE_RESOURCES, 'true');
+        $this->fakeConfig->SetKey(ConfigKeys::SCHEDULE_SHOW_INACCESSIBLE_RESOURCES, 'true');
 
         $userId = $this->fakeUser->UserId;
         $defaultScheduleId = 10;

@@ -21,8 +21,7 @@ class SchedulePresenterTest extends TestBase
         $otherSchedule = new Schedule(2, 'not default', false, 0, $this->numDaysVisible);
 
         $this->schedules = [$this->currentSchedule, $otherSchedule];
-        $this->fakeConfig->SetSectionKey(
-            ConfigSection::SCHEDULE,
+        $this->fakeConfig->SetKey(
             ConfigKeys::SCHEDULE_SHOW_INACCESSIBLE_RESOURCES,
             $this->showInaccessibleResources
         );
@@ -973,6 +972,7 @@ class FakeSchedulePage implements ISchedulePage
 
     public function GetScheduleId()
     {
+        return null;
     }
 
     /**
@@ -1018,6 +1018,7 @@ class FakeSchedulePage implements ISchedulePage
      */
     public function GetSelectedDate()
     {
+        return null;
     }
 
     /**
@@ -1038,6 +1039,7 @@ class FakeSchedulePage implements ISchedulePage
      */
     public function GetShowFullWeek()
     {
+        return null;
     }
 
     /**
@@ -1052,6 +1054,7 @@ class FakeSchedulePage implements ISchedulePage
      */
     public function GetLayoutDate()
     {
+        return null;
     }
 
     /**
@@ -1060,10 +1063,11 @@ class FakeSchedulePage implements ISchedulePage
      */
     public function GetScheduleStyle($scheduleId)
     {
+        return null;
     }
 
     /**
-     * @param string|ScheduleStyle Direction
+     * @param string|ScheduleStyle $direction
      */
     public function SetScheduleStyle($direction)
     {
@@ -1074,6 +1078,7 @@ class FakeSchedulePage implements ISchedulePage
      */
     public function GetGroupId()
     {
+        return null;
     }
 
     /**
@@ -1166,10 +1171,12 @@ class FakeSchedulePage implements ISchedulePage
 
     public function GetDisplayTimezone(UserSession $user, Schedule $schedule)
     {
+        return null;
     }
 
     public function GetResourceId()
     {
+        return null;
     }
 
     public function GetSelectedDates()
@@ -1191,6 +1198,7 @@ class FakeSchedulePage implements ISchedulePage
 
     public function FilterCleared()
     {
+        return null;
     }
 
     public function BindScheduleAvailability($availability, $tooEarly)
@@ -1228,10 +1236,12 @@ class FakeSchedulePage implements ISchedulePage
     public function GetOwnerText()
     {
         // TODO: Implement GetOwnerText() method.
+        return null;
     }
 
     public function GetParticipantText()
     {
         // TODO: Implement GetParticipantText() method.
+        return null;
     }
 }

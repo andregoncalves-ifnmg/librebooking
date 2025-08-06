@@ -11,10 +11,6 @@ function Schedule(opts, resourceGroups) {
     const ScheduleWide = "1";
     const ScheduleTall = "2";
     const ScheduleCondensed = "3";
-    //Replaced by a global button
-    /* const elements = {
-         topButton: $('#reservationsToTop')
-     };*/
 
     this.init = function () {
         this.initUserDefaultSchedule();
@@ -25,11 +21,13 @@ function Schedule(opts, resourceGroups) {
         this.initNavigation();
         addNumericalIdsToRows();
 
-        var today = $(".today");
-        if (today && today.length > 0) {
-            $('html, body').animate({
-                scrollTop: today.offset().top - 50
-            }, 500);
+        if (scheduleOpts.autoScrollToday) {
+            var today = $(".today");
+            if (today && today.length > 0) {
+                $('html, body').animate({
+                    scrollTop: today.offset().top - 50
+                }, 500);
+            }
         }
 
         $(window).on('resize', _.debounce(function () {
@@ -38,20 +36,6 @@ function Schedule(opts, resourceGroups) {
                 renderEvents(true);
             }
         }, 1000));
-        //Replaced by a global button
-        /*$(window).on('scroll', function () {
-            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                elements.topButton[0].style.display = "block";
-            } else {
-                elements.topButton[0].style.display = "none";
-            }
-        });
-
-        elements.topButton.on('click', function () {
-            $('html, body').animate({
-                scrollTop: 0
-            }, 500);
-        });*/
 
         setInterval(function () {
             renderEvents(true);
@@ -785,10 +769,13 @@ function Schedule(opts, resourceGroups) {
         if (options.specificDates.length > 0) {
             CheckMultiDateSelect();
 
-            multidateselect.attr('checked', true);
+            multidateselect.prop('checked', true);
+
             $.each(options.specificDates, function (i, v) {
-                var d = v.split('-');
-                AddSpecificDate(v, { selectedYear: d[0], selectedMonth: d[1] - 1, selectedDay: d[2] });
+                const parts = v.split('-');
+                const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+
+                AddSpecificDate(dateObj);
             });
         }
 
@@ -862,12 +849,10 @@ function Schedule(opts, resourceGroups) {
             var isInteger = /^[0-9]+$/.test(scheduleDisplay);
 
             if (isInteger) {
-                
                 // If is valid cerate a normal cookie
                 createCookie(opts.cookieName, parseInt(scheduleDisplay, 10), 30, opts.scriptUrl);
                 window.location.reload();
             } else {
-                
                 // Otherwise create a cookie with value 0
                 createCookie(opts.cookieName, 0, 30, opts.scriptUrl);
                 window.location.reload();
@@ -1216,28 +1201,44 @@ function ChangeGroup(node) {
     });
 }
 
-function AddSpecificDate(dateText, inst) {
-    var formattedDate = inst.selectedYear + '-' + (inst.selectedMonth + 1) + '-' + inst.selectedDay;
-    if (scheduleSpecificDates.indexOf(formattedDate) != -1) {
+function AddSpecificDate(dateObj) {
+    const formattedDate = dateObj.getFullYear() + '-' +
+        String(dateObj.getMonth() + 1).padStart(2, '0') + '-' +
+        String(dateObj.getDate()).padStart(2, '0');
+
+    if (scheduleSpecificDates.includes(formattedDate)) {
         return;
     }
+
     $('#individualDatesGo').show();
     scheduleSpecificDates.push(formattedDate);
-    var dateItem = '<div data-date="' + formattedDate + '">' + dateText + ' <i class="bi bi-x-circle text-danger icon remove removeSpecificDate"><i/><div>';
 
-    $('#individualDatesList').html($('#individualDatesList').html() + dateItem);
+    const dateItem = `<div data-date="${formattedDate}">
+        ${formattedDate} <i class="bi bi-x-circle text-danger icon remove removeSpecificDate"></i>
+    </div>`;
+
+    $('#individualDatesList').append(dateItem);
 }
 
-function dpDateChanged(dateText, inst) {
-    if ($('#multidateselect').is(':checked')) {
-        AddSpecificDate(dateText, inst);
-    } else {
+function dpDateChanged(selectedDates, inst) {
+    const date = selectedDates[0];
 
-        if (inst) {
-            ChangeDate(inst.selectedYear, inst.selectedMonth + 1, inst.selectedDay);
+    if ($('#multidateselect').is(':checked')) {
+        AddSpecificDate(date);
+    } else {
+        if (date) {
+            ChangeDate(
+                date.getFullYear(),
+                String(date.getMonth() + 1).padStart(2, '0'),
+                String(date.getDate()).padStart(2, '0')
+            );
         } else {
-            var date = new Date();
-            ChangeDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+            const now = new Date();
+            ChangeDate(
+                now.getFullYear(),
+                String(now.getMonth() + 1).padStart(2, '0'),
+                String(now.getDate()).padStart(2, '0')
+            );
         }
     }
 }
@@ -1262,8 +1263,6 @@ function RedirectToSelf(queryStringParam, regexMatch, substitution, preProcess) 
     } else {
         newUrl = newUrl + "?" + substitution;
     }
-
     newUrl = newUrl.replace("#", "");
-
     window.location = newUrl;
 }

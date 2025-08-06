@@ -10,8 +10,7 @@
 				</button>
 				<button class="btn btn-primary dropdown-toggle" type="button" id="moreResourceActions"
 					data-bs-toggle="dropdown">
-					<span class="visually-hidden">{translate key='More'}</span>
-					<i class="bi bi-three-dots"></i>
+					{translate key="MoreResourceActions"}
 				</button>
 				<ul class="dropdown-menu" role="menu" aria-labelledby="moreResourceActions">
 
@@ -126,10 +125,13 @@
 							</div>
 							<div class="form-group {$groupClass}">
 								<label for="filterCapacity" class="fw-bold">{translate key=MinimumCapacity}</label>
-								<input type="number" min="0" id="filterCapacity" class="form-control"
-									{formname key=MAX_PARTICIPANTS} value="{$CapacityFilter}"
-									placeholder="{translate key=MinimumCapacity}" />
-								{*<span class="searchclear bi bi-x-circle input-group-text" ref="filterCapacity"></span>*}
+								<div class="position-relative">
+									<input type="number" min="0" id="filterCapacity" class="form-control"
+										{formname key=MAX_PARTICIPANTS} value="{$CapacityFilter}"
+										placeholder="{translate key=MinimumCapacity}" />
+									<span class="searchclear searchclear-label bi bi-x-circle-fill me-4"
+										ref="filterCapacity"></span>
+								</div>
 							</div>
 							<div class="form-group {$groupClass}">
 								<label for="filterRequiresApproval"
@@ -175,7 +177,6 @@
 			</div>
 		</div>
 	</div>
-	{*{pagination pageInfo=$PageInfo showCount=true}*}
 
 	<div id="globalError" class="error d-none"></div>
 
@@ -258,7 +259,8 @@
 													</div>
 													<div class="text-center">
 														<div>{translate key=ResourceColor}</div>
-														<input class="resourceColorPicker w-50 border" type="color"
+														<input type="color"
+															class="resourceColorPicker w-50 mx-auto border form-control form-control-color"
 															value='{if $resource->HasColor()}{$resource->GetColor()}{else}#ffffff{/if}'
 															alt="{translate key=ResourceColor}"
 															title="{translate key=ResourceColor}" />
@@ -299,20 +301,21 @@
 																</div>
 															</div>
 															<div>
+																<label class="inline fw-bold">ResourceId:</label>
+																<span>{$id}</span>
+															</div>
+															<div>
 																<label
 																	class="inline fw-bold">{translate key='Status'}</label>
 																{if $resource->IsAvailable()}
-																	{*{html_image src="status.png"}*}
 																	<a class="update changeStatus link-primary" href="#"
 																		data-popover-content="#statusDialog">{translate key='Available'}</a>
 																	<i class="bi bi-check-circle-fill text-success"></i>
 																{elseif $resource->IsUnavailable()}
-																	{*{html_image src="status-away.png"}*}
 																	<a class="update changeStatus link-primary" href="#"
 																		data-popover-content="#statusDialog">{translate key='Unavailable'}</a>
 																	<i class="bi bi-exclamation-circle-fill text-warning"></i>
 																{else}
-																	{*{html_image src="status-busy.png"}*}
 																	<a class="update changeStatus link-primary" href="#"
 																		data-popover-content="#statusDialog">{translate key='Hidden'}</a>
 																	<i class="bi bi-x-circle-fill text-danger"></i>
@@ -390,7 +393,11 @@
 															<div>
 																<label
 																	class="inline fw-bold">{translate key='Contact'}</label>
-																<span class="propertyValue contactValue" data-type="text"
+																{if $ResourceContactIsUser}
+																	<span class="propertyValue contactValue" data-type="select"
+																{else}
+																	<span class="propertyValue contactValue" data-type="text"
+																{/if}
 																	data-pk="{$id}" data-value="{$resource->GetContact()}"
 																	data-name="{FormKeys::RESOURCE_CONTACT}">
 																	{if $resource->HasContact()}
@@ -574,7 +581,7 @@
 																			<i id="customAttributesIcon{$id}"
 																				class="bi bi-chevron-down"></i>
 																		</a>
-																		<div id="customAttributes{$id}" class="collapse">
+																		<div id="customAttributes{$id}" class="collapse show">
 																			<div class="row">
 																			{/if}
 																			{include file='Admin/InlineAttributeEdit.tpl' id=$id attribute=$attribute value=$resource->GetAttributeValue($attribute->Id())}
@@ -611,8 +618,6 @@
 		</div>
 	</div>
 
-	{*{pagination pageInfo=$PageInfo}*}
-
 	<div id="add-resource-dialog" class="modal" tabindex="-1" role="dialog" aria-labelledby="addResourceModalLabel"
 		aria-hidden="true">
 		<form id="addResourceForm" class="form" role="form" method="post"
@@ -632,7 +637,6 @@
 							</label>
 							<input type="text" class="form-control required has-feedback " maxlength="85"
 								id="resourceName" {formname key=RESOURCE_NAME} />
-							{*<i class="bi bi-asterisk form-control-feedback" data-bv-icon-for="resourceName"></i>*}
 
 						</div>
 						<div class="form-group mb-2">
@@ -646,8 +650,8 @@
 						<div class="form-group mb-2">
 							<label class="fw-bold" for="permissions">{translate key='ResourcePermissions'}</label>
 							<select class="form-select" {formname key=AUTO_ASSIGN} id="permissions">
-								<option value="1">{translate key="ResourcePermissionAutoGranted"}</option>
 								<option value="0">{translate key="ResourcePermissionNotAutoGranted"}</option>
+								<option value="1">{translate key="ResourcePermissionAutoGranted"}</option>
 							</select>
 						</div>
 						<div class="form-group mb-2">
@@ -1800,7 +1804,7 @@
 								</div>
 							</div>
 
-						</div> {*accordion*}
+						</div>
 						{csrf_token}
 					</form>
 				</div>
@@ -2122,36 +2126,35 @@
 		$.fn.editabletypes.trumbowyg = Trumbowyg;
 	}
 
-	function hidePopoversWhenClickAway() {
-		$('body').on('click', function(e) {
-			$('[rel="popover"]').each(function() {
-				if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e
-						.target).length === 0) {
-					$(this).popover('hide');
-				}
-			});
-		});
-	}
-
 	function setUpPopovers() {
 		$('[rel="popover"]').popover({
 			container: 'body',
 			html: true,
 			placement: 'top',
+			trigger: 'manual',
 			content: function() {
 				var popoverId = $(this).data('popover-content');
 				return $(popoverId).html();
 			}
-		}).click(function(e) {
-			e.preventDefault();
-		}).on('show.bs.popover', function() {
+		});
 
-		}).on('shown.bs.popover', function() {
-			var trigger = $(this);
-			var popover = trigger.data('bs.popover').tip();
-			popover.find('.editable-cancel').click(function() {
-				trigger.popover('hide');
-			});
+		$('[rel="popover"]').on('click', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			// Hide other popovers if needed
+			$('[rel="popover"]').not(this).popover('hide');
+
+			// Toggle the clicked one
+			$(this).popover('toggle');
+		});
+
+		$('.descriptionValue').on('shown', function(e, editable) {
+			$(document).off('click.editable');
+		});
+
+		$('.notesValue').on('shown', function(e, editable) {
+			$(document).off('click.editable');
 		});
 	}
 
@@ -2181,6 +2184,7 @@
 		};
 
 		var updateUrl = '{$smarty.server.SCRIPT_NAME}?action=';
+        var xUserAutocompleteUrl = "../ajax/autocomplete.php?type={AutoCompleteType::XUser}";
 
 		$('.resourceNameField').editable({
 				url: updateUrl + '{ManageResourcesActions::ActionRename}', validate: function (value) {
@@ -2223,11 +2227,17 @@
 	});
 
 	$('.contactValue').editable({
-		url: updateUrl + '{ManageResourcesActions::ActionChangeContact}', emptytext: "{translate key='NoContactLabel'|escape:'javascript'}"
+		url: updateUrl + '{ManageResourcesActions::ActionChangeContact}',
+		{if $ResourceContactIsUser}
+			emptytext: "{translate key='NoContactLabel'|escape:'javascript'}",
+			source: xUserAutocompleteUrl,
+		{else}
+			emptytext: "{translate key='NoContactLabel'|escape:'javascript'}"
+		{/if}
 	});
 
 	$('.descriptionValue').editable({
-		url: updateUrl + '{ManageResourcesActions::ActionChangeDescription}', 
+		url: updateUrl + '{ManageResourcesActions::ActionChangeDescription}',
 		emptytext: "{translate key='NoDescriptionLabel'|escape:'javascript'}"
 	});
 
@@ -2257,7 +2267,6 @@
 	$(document).ready(function() {
 		addTrumbowygType();
 		setUpPopovers();
-		hidePopoversWhenClickAway();
 		setUpEditables();
 		setupCustomAttributesIcon();
 
@@ -2390,7 +2399,7 @@
 				resource.images.push('{resource_image image=$image}');
 			{/foreach}
 
-			resource.resourceGroupIds = [{','|join:$resource->GetResourceGroupIds()}];
+			resource.resourceGroupIds = [{$resource->GetResourceGroupIds()|join:','}];
 
 			resourceManagement.add(resource);
 		{/foreach}

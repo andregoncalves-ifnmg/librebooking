@@ -267,11 +267,6 @@ class ReservationSavePage extends SecurePage implements IReservationSavePage
         return $resources;
     }
 
-    public function GetRepeatOptions()
-    {
-        //TODO: Needed?
-        return $this->_presenter->GetRepeatOptions();
-    }
 
     public function GetRepeatType()
     {
@@ -429,9 +424,8 @@ class ReservationSavePage extends SecurePage implements IReservationSavePage
 
     private function AttachmentsEnabled()
     {
-        return Configuration::Instance()->GetSectionKey(
-            ConfigSection::UPLOADS,
-            ConfigKeys::UPLOAD_ENABLE_RESERVATION_ATTACHMENTS,
+        return Configuration::Instance()->GetKey(
+            ConfigKeys::UPLOAD_RESERVATION_ATTACHMENTS_ENABLED,
             new BooleanConverter()
         );
     }

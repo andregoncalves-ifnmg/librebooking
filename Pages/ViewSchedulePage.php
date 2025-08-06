@@ -9,10 +9,10 @@ class ViewSchedulePage extends SchedulePage
     private $userRepository;
 
     private $_styles = [
-                ScheduleStyle::Wide => 'Schedule/schedule-days-horizontal.tpl',
-                ScheduleStyle::Tall => 'Schedule/schedule-flipped.tpl',
-                ScheduleStyle::CondensedWeek => 'Schedule/schedule-week-condensed.tpl',
-        ];
+        ScheduleStyle::Wide => 'Schedule/schedule-days-horizontal.tpl',
+        ScheduleStyle::Tall => 'Schedule/schedule-flipped.tpl',
+        ScheduleStyle::CondensedWeek => 'Schedule/schedule-week-condensed.tpl',
+    ];
 
     public function __construct()
     {
@@ -41,14 +41,15 @@ class ViewSchedulePage extends SchedulePage
 
     public function ProcessPageLoad()
     {
-        URIScriptValidator::validate($_SERVER['REQUEST_URI'], '/view-schedule.php');
-        ParamsValidator::validate(RouteParamsKeys::VIEW_SCHEDULE, $_SERVER['REQUEST_URI'], '/view-schedule.php', true);
-        
+
+        // URIScriptValidator::validateOrRedirect($_SERVER['REQUEST_URI'], '/view-schedule.php');
+        // ParamsValidator::validateOrRedirect(RouteParamsKeys::VIEW_SCHEDULE, $_SERVER['REQUEST_URI'], '/view-schedule.php', true);
+
         $user = new NullUserSession();
         $this->_presenter->PageLoad($user);
 
-        $viewReservations = Configuration::Instance()->GetSectionKey(ConfigSection::PRIVACY, ConfigKeys::PRIVACY_VIEW_RESERVATIONS, new BooleanConverter());
-        $allowGuestBookings = Configuration::Instance()->GetSectionKey(ConfigSection::PRIVACY, ConfigKeys::PRIVACY_ALLOW_GUEST_BOOKING, new BooleanConverter());
+        $viewReservations = Configuration::Instance()->GetKey(ConfigKeys::PRIVACY_VIEW_RESERVATIONS, new BooleanConverter());
+        $allowGuestBookings = Configuration::Instance()->GetKey(ConfigKeys::PRIVACY_ALLOW_GUEST_RESERVATIONS, new BooleanConverter());
 
         $this->Set('DisplaySlotFactory', new DisplaySlotFactory());
         $this->Set('SlotLabelFactory', $viewReservations || $allowGuestBookings ? new SlotLabelFactory($user) : new NullSlotLabelFactory());
@@ -75,7 +76,7 @@ class ViewSchedulePage extends SchedulePage
 
     public function ShowInaccessibleResources()
     {
-        return Configuration::Instance()->GetSectionKey(ConfigSection::PRIVACY, ConfigKeys::SCHEDULE_SHOW_INACCESSIBLE_RESOURCES, new BooleanConverter());
+        return Configuration::Instance()->GetKey(ConfigKeys::SCHEDULE_SHOW_INACCESSIBLE_RESOURCES, new BooleanConverter());
     }
 
     protected function GetShouldAutoLogout()

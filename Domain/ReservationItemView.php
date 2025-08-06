@@ -894,8 +894,8 @@ class ReservationItemView implements IReservedItemView
     {
         if ($this->HasBufferTime()) {
             $range = new DateRange(
-                $this->StartDate->SubtractInterval($this->BufferTime),
-                $this->EndDate->AddInterval($this->BufferTime)
+                $this->StartDate->SubtractInterval($this->GetBufferTime()),
+                $this->EndDate->AddInterval($this->GetBufferTime())
             );
         } else {
             $range = new DateRange($this->StartDate, $this->EndDate);
@@ -911,7 +911,7 @@ class ReservationItemView implements IReservedItemView
 
     public function RequiresCheckin()
     {
-        $checkinMinutes = Configuration::Instance()->GetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_CHECKIN_MINUTES, new IntConverter());
+        $checkinMinutes = Configuration::Instance()->GetKey(ConfigKeys::RESERVATION_CHECKIN_MINUTES_PRIOR, new IntConverter());
 
         return ($this->CheckinDate->ToString() == '' &&
                 $this->IsCheckInEnabled &&

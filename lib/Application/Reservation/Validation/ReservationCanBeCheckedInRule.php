@@ -3,22 +3,26 @@
 class ReservationCanBeCheckedInRule implements IReservationValidationRule
 {
     /**
-     * @param ExistingReservationSeries $reservationSeries
-     * @param null|ReservationRetryParameter[] $retryParameters
-     * @return ReservationRuleResult
+     * @var UserSession
      */
+    private $userSession;
 
     public function __construct(UserSession $userSession)
     {
         $this->userSession = $userSession;
     }
 
+    /**
+     * @param ExistingReservationSeries $reservationSeries
+     * @param null|ReservationRetryParameter[] $retryParameters
+     * @return ReservationRuleResult
+     */
     public function Validate($reservationSeries, $retryParameters)
     {
         $isOk = true;
         $atLeastOneReservationRequiresCheckIn = false;
-        $checkinMinutes = Configuration::Instance()->GetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_CHECKIN_MINUTES, new IntConverter());
-        $checkinAdminOnly = Configuration::Instance()->GetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_CHECKIN_ADMIN_ONLY, new BooleanConverter());
+        $checkinMinutes = Configuration::Instance()->GetKey(ConfigKeys::RESERVATION_CHECKIN_MINUTES_PRIOR, new IntConverter());
+        $checkinAdminOnly = Configuration::Instance()->GetKey(ConfigKeys::RESERVATION_CHECKIN_ADMIN_ONLY, new BooleanConverter());
 
         $reservation = $reservationSeries->CurrentInstance();
         $tooEarly = Date::Now()->LessThan($reservation->StartDate()->AddMinutes(-$checkinMinutes));

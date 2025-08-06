@@ -50,7 +50,7 @@ interface IResourceRepository
     public function GetResourceList();
 
     /**
-     * @return array|$resourceIds[] array of all resource IDs
+     * @return int[] array of all resource IDs
      */
     public function GetResourceIdList(): array;
 
@@ -60,7 +60,7 @@ interface IResourceRepository
     public function GetUserResourceList();
 
     /**
-     * @return array|$resourceIds[] array of user accessible resources IDs
+     * @return int[] array of user accessible resources IDs
      */
     public function GetUserResourceIdList();
 
@@ -261,4 +261,9 @@ interface IResourceRepository
      * @return array all public resource ids in key value id=>publicid
      */
     public function GetPublicResourceIds();
+
+    /**
+     * @return ResourceGroup[]|array
+     */
+    public function GetResourceGroupsList();
 }

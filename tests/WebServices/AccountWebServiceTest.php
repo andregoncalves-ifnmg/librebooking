@@ -22,7 +22,7 @@ class AccountWebServiceTest extends TestBase
 
         $this->server = new FakeRestServer();
         $this->controller = new FakeAccountController();
-        $this->fakeConfig->SetSectionKey(ConfigSection::API, ConfigKeys::ALLOW_REGISTRATION, 'true');
+        $this->fakeConfig->SetKey(ConfigKeys::REGISTRATION_ALLOW_SELF, 'true');
         $this->service = new AccountWebService($this->server, $this->controller);
     }
 
@@ -55,7 +55,7 @@ class AccountWebServiceTest extends TestBase
 
         $this->service->Create();
 
-        $this->assertEquals(new FailedResponse($this->server, $errors), $this->server->_LastResponse);
+        $this->assertEquals(new FailedResponse($errors), $this->server->_LastResponse);
         $this->assertEquals(RestResponse::BAD_REQUEST_CODE, $this->server->_LastResponseCode);
         $this->assertEquals($userRequest, $this->controller->_LastRequest);
     }
@@ -92,7 +92,7 @@ class AccountWebServiceTest extends TestBase
 
         $this->service->Update($userId);
 
-        $this->assertEquals(new FailedResponse($this->server, $errors), $this->server->_LastResponse);
+        $this->assertEquals(new FailedResponse($errors), $this->server->_LastResponse);
         $this->assertEquals(RestResponse::BAD_REQUEST_CODE, $this->server->_LastResponseCode);
     }
 
@@ -126,7 +126,7 @@ class AccountWebServiceTest extends TestBase
 
         $this->service->UpdatePassword($userId);
 
-        $this->assertEquals(new FailedResponse($this->server, $errors), $this->server->_LastResponse);
+        $this->assertEquals(new FailedResponse($errors), $this->server->_LastResponse);
         $this->assertEquals(RestResponse::BAD_REQUEST_CODE, $this->server->_LastResponseCode);
     }
 }
@@ -160,10 +160,12 @@ class FakeAccountController implements IAccountController
     public function LoadUser(WebServiceUserSession $session)
     {
         // TODO: Implement GetUserAttributes() method.
+        return null;
     }
 
     public function GetUserAttributes(WebServiceUserSession $session)
     {
         // TODO: Implement GetUserAttributes() method.
+        return null;
     }
 }

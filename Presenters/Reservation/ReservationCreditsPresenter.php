@@ -11,7 +11,7 @@ class ReservationCreditsPresenter
     private $page;
 
     /**
-     * @var IReservationViewRepository
+     * @var IReservationRepository
      */
     private $reservationRepository;
     /**
@@ -43,7 +43,7 @@ class ReservationCreditsPresenter
 
     public function PageLoad(UserSession $userSession)
     {
-        if (!Configuration::Instance()->GetSectionKey(ConfigSection::CREDITS, ConfigKeys::CREDITS_ENABLED, new BooleanConverter())) {
+        if (!Configuration::Instance()->GetKey(ConfigKeys::CREDITS_ENABLED, new BooleanConverter())) {
             $this->page->SetCreditRequired(0, null);
             return;
         }
@@ -54,7 +54,7 @@ class ReservationCreditsPresenter
         $creditsRequired = $reservation->GetCreditsRequired();
 
         $cost = '';
-        if (Configuration::Instance()->GetSectionKey(ConfigSection::CREDITS, ConfigKeys::CREDITS_ALLOW_PURCHASE, new BooleanConverter())) {
+        if (Configuration::Instance()->GetKey(ConfigKeys::CREDITS_ALLOW_PURCHASE, new BooleanConverter())) {
             $creditCost = $this->paymentRepository->GetCreditCosts();
             // Only give an estimation of costs if there is only one cost configured
             if (count($creditCost) == 1) {
@@ -78,8 +78,8 @@ class ReservationCreditsPresenter
 
             $reservationSeries = ReservationSeries::Create($userId, $resource, null, null, $duration, $repeatOptions, $userSession);
 
-            $resourceIds = $this->GetAdditionalResourceIds();
-            foreach ($resourceIds as $resourceId) {
+            $additionalResourceIds = $this->GetAdditionalResourceIds();
+            foreach ($additionalResourceIds as $resourceId) {
                 if ($primaryResourceId != $resourceId) {
                     $reservationSeries->AddResource($this->resourceRepository->LoadById($resourceId));
                 }
@@ -91,7 +91,7 @@ class ReservationCreditsPresenter
             $existingSeries = $this->reservationRepository->LoadByReferenceNumber($referenceNumber);
 
             $resourceId = $this->page->GetResourceId();
-            $resourceIds = $this->GetAdditionalResourceIds();
+            $additionalResourceIds = $this->GetAdditionalResourceIds();
 
             if (empty($resourceId)) {
                 // the first additional resource will become the primary if the primary is removed
@@ -113,7 +113,7 @@ class ReservationCreditsPresenter
             $existingSeries->Repeats($roFactory->CreateFromComposite($this->page, $userSession->Timezone));
 
             $additionalResources = [];
-            foreach ($resourceIds as $additionalResourceId) {
+            foreach ($additionalResourceIds as $additionalResourceId) {
                 if ($additionalResourceId != $resourceId) {
                     $additionalResources[] = $this->resourceRepository->LoadById($additionalResourceId);
                 }

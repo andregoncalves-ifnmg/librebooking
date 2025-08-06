@@ -2,6 +2,7 @@
 
 class iCalendarReservationView
 {
+    public $Classification;
     public $DateCreated;
     public $DateEnd;
     public $DateStart;
@@ -17,6 +18,12 @@ class iCalendarReservationView
     public $EndReminder;
     public $LastModified;
     public $IsPending;
+    public $ExtraIcalLines;
+
+    /**
+     * @var ExportFactory
+     */
+    private $ExportFactory;
 
     /**
      * @var ReservationItemView
@@ -32,16 +39,23 @@ class iCalendarReservationView
     public function __construct($res, UserSession $currentUser, IPrivacyFilter $privacyFilter, $summaryFormat = null)
     {
         if ($summaryFormat == null) {
-            $summaryFormat = Configuration::Instance()->GetSectionKey(ConfigSection::RESERVATION_LABELS, ConfigKeys::RESERVATION_LABELS_ICS_SUMMARY);
+            $summaryFormat = Configuration::Instance()->GetKey(ConfigKeys::RESERVATION_LABELS_ICS_SUMMARY);
         }
         $factory = new SlotLabelFactory($currentUser);
         $this->ReservationItemView = $res;
         $canViewUser = $privacyFilter->CanViewUser($currentUser, $res, $res->OwnerId);
         $canViewDetails = $privacyFilter->CanViewDetails($currentUser, $res, $res->OwnerId);
 
+        $this->ExportFactory = PluginManager::Instance()->LoadExport();
+
         $privateNotice = 'Private';
 
-        $this->DateCreated = $res->DateCreated;
+        $this->Classification = method_exists($this->ExportFactory, 'GetIcalendarClassification') ? $this->ExportFactory->GetIcalendarClassification($res) : 'PUBLIC';
+        if ($res->DateCreated){
+                $this->DateCreated = $res->DateCreated;
+        }
+        else $this->DateCreated = Date::Now();
+
         $this->DateEnd = $res->EndDate;
         $this->DateStart = $res->StartDate;
         $this->Description =  $canViewDetails ? $factory->Format($res, $summaryFormat) : $privateNotice;
@@ -62,12 +76,14 @@ class iCalendarReservationView
 
         $this->StartReminder = $res->StartReminder;
         $this->EndReminder = $res->EndReminder;
-        $this->LastModified = empty($res->ModifiedDate) || $res->ModifiedDate->ToString() == '' ? $res->DateCreated : $res->ModifiedDate;
+        $this->LastModified = empty($res->ModifiedDate) || $res->ModifiedDate->ToString() == '' ? $this->DateCreated : $res->ModifiedDate;
         $this->IsPending = $res->RequiresApproval;
 
         if ($res->OwnerId == $currentUser->UserId) {
             $this->OrganizerEmail = str_replace('@', '-noreply@', $res->OwnerEmailAddress);
         }
+
+        $this->ExtraIcalLines = method_exists($this->ExportFactory, 'GetIcalendarExtraLines') ? $this->ExportFactory->GetIcalendarExtraLines($res) : null;
     }
 
     /**

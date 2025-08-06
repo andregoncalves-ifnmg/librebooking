@@ -6,7 +6,7 @@ require_once(ROOT_DIR . 'lib/Application/Schedule/namespace.php');
 class CalendarSubscriptionValidatorTest extends TestBase
 {
     /**
-     * @var ICalendarSubscriptionPage|PHPUnit_Framework_MockObject_MockObject
+     * @var ICalendarSubscriptionPage|PHPUnit\Framework\MockObject\MockObject
      */
     private $page;
 
@@ -16,7 +16,7 @@ class CalendarSubscriptionValidatorTest extends TestBase
     private $validator;
 
     /**
-     * @var ICalendarSubscriptionService|PHPUnit_Framework_MockObject_MockObject
+     * @var ICalendarSubscriptionService|PHPUnit\Framework\MockObject\MockObject
      */
     private $subscriptionService;
 
@@ -104,7 +104,7 @@ class CalendarSubscriptionValidatorTest extends TestBase
             ->method('GetSubscriptionKey')
             ->willReturn('12');
 
-        $this->fakeConfig->SetSectionKey(ConfigSection::ICS, ConfigKeys::ICS_SUBSCRIPTION_KEY, '123');
+        $this->fakeConfig->SetKey(ConfigKeys::ICS_SUBSCRIPTION_KEY, '123');
 
         $isValid = $this->validator->IsValid();
 
@@ -113,7 +113,7 @@ class CalendarSubscriptionValidatorTest extends TestBase
 
     public function testIsNotValidWhenSubscriptionKeyIsNotConfigured()
     {
-        $this->fakeConfig->SetSectionKey(ConfigSection::ICS, ConfigKeys::ICS_SUBSCRIPTION_KEY, '');
+        $this->fakeConfig->SetKey(ConfigKeys::ICS_SUBSCRIPTION_KEY, '');
 
         $isValid = $this->validator->IsValid();
 
@@ -126,6 +126,6 @@ class CalendarSubscriptionValidatorTest extends TestBase
             ->method('GetSubscriptionKey')
             ->willReturn('123');
 
-        $this->fakeConfig->SetSectionKey(ConfigSection::ICS, ConfigKeys::ICS_SUBSCRIPTION_KEY, '123');
+        $this->fakeConfig->SetKey(ConfigKeys::ICS_SUBSCRIPTION_KEY, '123');
     }
 }

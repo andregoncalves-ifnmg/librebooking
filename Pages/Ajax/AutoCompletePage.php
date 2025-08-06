@@ -12,6 +12,7 @@ class AutoCompletePage extends Page
         parent::__construct();
 
         $this->listMethods[AutoCompleteType::User] = 'GetUsers';
+        $this->listMethods[AutoCompleteType::XUser] = 'XGetUsers';
         $this->listMethods[AutoCompleteType::MyUsers] = 'GetMyUsers';
         $this->listMethods[AutoCompleteType::Group] = 'GetGroups';
         $this->listMethods[AutoCompleteType::Organization] = 'GetOrganizations';
@@ -57,6 +58,10 @@ class AutoCompletePage extends Page
         if ($term == 'group') {
             return $this->GetGroupUsers($this->GetQuerystring(QueryStringKeys::GROUP_ID));
         }
+        if (empty($term)) {
+            $term = '';
+        }
+
 
         $onlyActive = false;
         $activeQS = $this->GetQuerystring(QueryStringKeys::ACCOUNT_STATUS);
@@ -78,9 +83,9 @@ class AutoCompletePage extends Page
         }
         $results = $r->GetList(1, PageInfo::All, null, null, $filter, $status)->Results();
 
-        $hideUserDetails = Configuration::Instance()->GetSectionKey(ConfigSection::PRIVACY, ConfigKeys::PRIVACY_HIDE_USER_DETAILS, new BooleanConverter());
+        $hideUserDetails = Configuration::Instance()->GetKey(ConfigKeys::PRIVACY_HIDE_USER_DETAILS, new BooleanConverter());
         $users = [];
-        /** @var $result UserItemView */
+        /** @var UserItemView $result */
         foreach ($results as $result) {
             if (!$hideUserDetails || $result->Id == $currentUser->UserId || $user->IsGroupAdminFor($result->GroupIds) || $currentUser->IsAdmin) {
                 $users[] = new AutocompleteUser($result->Id, $result->First, $result->Last, $result->Email, $result->Username, $result->CurrentCreditCount);
@@ -88,6 +93,22 @@ class AutoCompletePage extends Page
         }
 
         return $users;
+    }
+
+    /**
+     * @param $term string
+     * @return array|XAutocompleteUser[]
+     */
+    private function XGetUsers($term)
+    {
+        $users = $this->GetUsers($term);
+
+        $outUsers = [new XAutocompleteUser("", "")];
+        foreach ($users as $user) {
+            $value = $user->Name . " <" . $user->Email . ">";
+            $outUsers[] = new XAutocompleteUser($value, $value);
+        }
+        return $outUsers;
     }
 
     private function GetGroups($term)
@@ -125,7 +146,7 @@ class AutoCompletePage extends Page
             $groupRepo = new GroupRepository();
             $results = $groupRepo->GetUsersInGroup($groupIds, null, null, $userFilter)->Results();
 
-            /** @var $result UserItemView */
+            /** @var UserItemView $result */
             foreach ($results as $result) {
                 // consolidates results by user id if the user is in multiple groups
                 $users[$result->Id] = new AutocompleteUser($result->Id, $result->First, $result->Last, $result->Email, $result->Username);
@@ -141,7 +162,7 @@ class AutoCompletePage extends Page
         $results = $groupRepo->GetUsersInGroup($groupId)->Results();
 
         $users = [];
-        /** @var $result UserItemView */
+        /** @var UserItemView $result */
         foreach ($results as $result) {
             // consolidates results by user id if the user is in multiple groups
             $users[$result->Id] = new AutocompleteUser($result->Id, $result->First, $result->Last, $result->Email, $result->Username);
@@ -158,12 +179,23 @@ class AutoCompletePage extends Page
         $results = $r->GetList(1, PageInfo::All, null, null, $filter)->Results();
 
         $organizations = [];
-        /** @var $result UserItemView */
+        /** @var UserItemView $result */
         foreach ($results as $result) {
             $organizations[] = $result->Organization;
         }
 
         return $organizations;
+    }
+}
+
+class XAutocompleteUser
+{
+    public $value;
+    public $text;
+    public function __construct($value, $text)
+    {
+        $this->value = $value;
+        $this->text = $text;
     }
 }
 
@@ -195,6 +227,7 @@ class AutocompleteUser
 class AutoCompleteType
 {
     public const User = 'user';
+    public const XUser = 'xuser';
     public const Group = 'group';
     public const MyUsers = 'myUsers';
     public const Organization = 'organization';

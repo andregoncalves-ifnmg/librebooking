@@ -91,7 +91,7 @@ interface ISchedulePage extends IActionPage
     public function GetScheduleStyle($scheduleId);
 
     /**
-     * @param string|ScheduleStyle Direction
+     * @param string|ScheduleStyle $direction
      */
     public function SetScheduleStyle($direction);
 
@@ -254,8 +254,8 @@ class SchedulePage extends ActionPage implements ISchedulePage
     {
         parent::__construct('Schedule');
 
-        $this->Set('CanViewUsers', !Configuration::Instance()->GetSectionKey(ConfigSection::PRIVACY, ConfigKeys::PRIVACY_HIDE_USER_DETAILS, new BooleanConverter()));
-        $this->Set('AllowParticipation', !Configuration::Instance()->GetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_PREVENT_PARTICIPATION, new BooleanConverter()));
+        $this->Set('CanViewUsers', !Configuration::Instance()->GetKey(ConfigKeys::PRIVACY_HIDE_USER_DETAILS, new BooleanConverter()));
+        $this->Set('AllowParticipation', !Configuration::Instance()->GetKey(ConfigKeys::RESERVATION_PREVENT_PARTICIPATION, new BooleanConverter()));
         $this->Set('AllowCreatePastReservationsButton', ServiceLocator::GetServer()->GetUserSession()->IsAdmin);
 
         $permissionServiceFactory = new PermissionServiceFactory();
@@ -281,6 +281,9 @@ class SchedulePage extends ActionPage implements ISchedulePage
     {
         $start = microtime(true);
 
+        URIScriptValidator::validateOrRedirect($_SERVER['REQUEST_URI'], '/schedule.php');
+        ParamsValidator::validateOrRedirect(RouteParamsKeys::VIEW_SCHEDULE, $_SERVER['REQUEST_URI'], '/schedule.php', true);
+
         $user = ServiceLocator::GetServer()->GetUserSession();
 
         // ensure Smarty $ResourceIds is an empty array to prevent an error if no
@@ -304,8 +307,8 @@ class SchedulePage extends ActionPage implements ISchedulePage
         $this->Set('ShowSubscription', true);
         $this->Set('UserIdFilter', $this->GetOwnerId());
         $this->Set('ParticipantIdFilter', $this->GetParticipantId());
-        $this->Set('ShowWeekNumbers', Configuration::Instance()->GetSectionKey(ConfigSection::SCHEDULE, ConfigKeys::SCHEDULE_SHOW_WEEK_NUMBERS, new BooleanConverter()));
-        $this->Set('FastReservationLoad', Configuration::Instance()->GetSectionKey(ConfigSection::SCHEDULE, ConfigKeys::SCHEDULE_FAST_RESERVATION_LOAD, new BooleanConverter()) ?? false);
+        $this->Set('ShowWeekNumbers', Configuration::Instance()->GetKey(ConfigKeys::SCHEDULE_SHOW_WEEK_NUMBERS, new BooleanConverter()));
+        $this->Set('FastReservationLoad', Configuration::Instance()->GetKey(ConfigKeys::SCHEDULE_FAST_RESERVATION_LOAD, new BooleanConverter()) ?? false);
 
         if ($this->IsMobile && !$this->IsTablet) {
             if ($this->ScheduleStyle == ScheduleStyle::Tall) {
@@ -419,9 +422,7 @@ class SchedulePage extends ActionPage implements ISchedulePage
 
     public function ShowInaccessibleResources()
     {
-        return Configuration::Instance()
-            ->GetSectionKey(
-                ConfigSection::SCHEDULE,
+        return Configuration::Instance()->GetKey(
                 ConfigKeys::SCHEDULE_SHOW_INACCESSIBLE_RESOURCES,
                 new BooleanConverter()
             );
@@ -598,7 +599,7 @@ class SchedulePage extends ActionPage implements ISchedulePage
 
     public function BindViewableResourceReservations($resourceIds)
     {
-        $this->Set('CanViewResourceReservations',$resourceIds);
+        $this->Set('CanViewResourceReservations', $resourceIds);
     }
 
     public function GetReservationRequest()

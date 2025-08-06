@@ -5,22 +5,22 @@ require_once(ROOT_DIR . 'Presenters/ParticipationPresenter.php');
 class ParticipationPresenterTest extends TestBase
 {
     /**
-     * @var IParticipationPage|PHPUnit_Framework_MockObject_MockObject
+     * @var IParticipationPage|PHPUnit\Framework\MockObject\MockObject
      */
     private $page;
 
     /**
-     * @var IReservationRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var IReservationRepository|PHPUnit\Framework\MockObject\MockObject
      */
     private $reservationRepo;
 
     /**
-     * @var IReservationViewRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var IReservationViewRepository|PHPUnit\Framework\MockObject\MockObject
      */
     private $reservationViewRepo;
 
     /**
-     * @var IScheduleRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var IScheduleRepository|PHPUnit\Framework\MockObject\MockObject
      */
     private $scheduleRepository;
 
@@ -274,7 +274,7 @@ class ParticipationPresenterTest extends TestBase
 
     public function testWhenReservationStartConstraintIsViolated()
     {
-        $this->fakeConfig->SetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_START_TIME_CONSTRAINT, ReservationStartTimeConstraint::FUTURE);
+        $this->fakeConfig->SetKey(ConfigKeys::RESERVATION_START_TIME_CONSTRAINT, ReservationStartTimeConstraint::FUTURE);
 
         $referenceNumber = 'abc';
         $currentUserId = 1029;
@@ -317,7 +317,7 @@ class ParticipationPresenterTest extends TestBase
 
     private function assertUpdatesSeriesParticipation($invitationAction, $seriesMethod)
     {
-        $this->fakeConfig->SetSectionKey(ConfigSection::RESERVATION, ConfigKeys::RESERVATION_START_TIME_CONSTRAINT, ReservationStartTimeConstraint::NONE);
+        $this->fakeConfig->SetKey(ConfigKeys::RESERVATION_START_TIME_CONSTRAINT, ReservationStartTimeConstraint::NONE);
         $currentUserId = 1029;
         $referenceNumber = 'abc123';
         $series = $this->createMock('ExistingReservationSeries');

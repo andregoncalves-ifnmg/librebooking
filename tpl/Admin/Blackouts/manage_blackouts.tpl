@@ -152,8 +152,8 @@
 						</div>
 						<div class="accordion-footer border-top pt-3">
 							{filter_button class="btn-sm" id="filter"}
-							<button id="showAll"
-								class="btn btn-outline-secondary btn-sm"><i class="bi bi-list-task me-1"></i>{translate key=ViewAll}</button>
+							<button id="showAll" class="btn btn-outline-secondary btn-sm"><i
+									class="bi bi-list-task me-1"></i>{translate key=ViewAll}</button>
 						</div>
 					</div>
 				</div>
@@ -189,9 +189,8 @@
 					</thead>
 					<tbody>
 						{foreach from=$blackouts item=blackout}
-							{*{cycle values='row0,row1' assign=rowCss}*}
 							{assign var=id value=$blackout->InstanceId}
-							<tr class="{$rowCss} editable" data-blackout-id="{$id}">
+							<tr class="editable" data-blackout-id="{$id}">
 								<td>{$blackout->ResourceName}</td>
 								<td class="date">{formatdate date=$blackout->StartDate timezone=$Timezone key=res_popup}
 								</td>
@@ -223,14 +222,6 @@
 							</tr>
 						{/foreach}
 					</tbody>
-					{*<tfoot>
-						<tr>
-							<td colspan="7"></td>
-							<td class="action-delete"><a href="#" id="delete-selected" class="d-none"
-									title="{translate key=Delete}">{translate key=Delete}<span
-										class="bi bi-trash3-fill text-danger icon remove"></span></a></td>
-						</tr>
-					</tfoot>*}
 				</table>
 			</div>
 		</div>
@@ -369,12 +360,7 @@
 			var blackoutManagement = new BlackoutManagement(blackoutOpts);
 			blackoutManagement.init();
 
-			//$('#add-blackout-panel').showHidePanel();
 		});
-
-		//$.blockUI.defaults.css.width = '80%';
-		//$.blockUI.defaults.css.left = '10%';
-		//$.blockUI.defaults.css.marginTop = '-5%';
 	</script>
 
 	{control type="DatePickerSetupControl" ControlId="startDate" AltId="formattedStartDate"}

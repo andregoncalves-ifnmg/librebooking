@@ -14,15 +14,9 @@ class ReservationWriteWebService
      */
     private $server;
 
-    /**
-     * @var IReservationSaveController
-     */
-    private $controller;
-
-    public function __construct(IRestServer $server, IReservationSaveController $controller)
+    public function __construct(IRestServer $server, private readonly IReservationSaveController $controller)
     {
         $this->server = $server;
-        $this->controller = $controller;
     }
 
     /**
@@ -34,7 +28,7 @@ class ReservationWriteWebService
      */
     public function Create()
     {
-        /** @var $request ReservationRequest */
+        /** @var ReservationRequest $request */
         $request = $this->server->GetRequest();
 
         Log::Debug(
@@ -59,7 +53,7 @@ class ReservationWriteWebService
             Log::Debug('ReservationWriteWebService.Create() - Reservation Failed.');
 
             $this->server->WriteResponse(
-                new FailedResponse($this->server, $result->Errors()),
+                new FailedResponse($result->Errors()),
                 RestResponse::BAD_REQUEST_CODE
             );
         }
@@ -76,7 +70,7 @@ class ReservationWriteWebService
      */
     public function Update($referenceNumber)
     {
-        /** @var $request ReservationRequest */
+        /** @var ReservationRequest $request */
         $request = $this->server->GetRequest();
 
         Log::Debug(
@@ -103,7 +97,7 @@ class ReservationWriteWebService
             Log::Debug('ReservationWriteWebService.Update() - Reservation Failed.');
 
             $this->server->WriteResponse(
-                new FailedResponse($this->server, $result->Errors()),
+                new FailedResponse($result->Errors()),
                 RestResponse::BAD_REQUEST_CODE
             );
         }
@@ -129,7 +123,7 @@ class ReservationWriteWebService
         } else {
             Log::Debug('ReservationWriteWebService.Approve() - Reservation Failed.');
 
-            $this->server->WriteResponse(new FailedResponse($this->server, $result->Errors()), RestResponse::BAD_REQUEST_CODE);
+            $this->server->WriteResponse(new FailedResponse($result->Errors()), RestResponse::BAD_REQUEST_CODE);
         }
     }
 
@@ -153,7 +147,7 @@ class ReservationWriteWebService
         } else {
             Log::Debug('ReservationWriteWebService.Checkin() - Reservation Failed.');
 
-            $this->server->WriteResponse(new FailedResponse($this->server, $result->Errors()), RestResponse::BAD_REQUEST_CODE);
+            $this->server->WriteResponse(new FailedResponse($result->Errors()), RestResponse::BAD_REQUEST_CODE);
         }
     }
 
@@ -177,7 +171,7 @@ class ReservationWriteWebService
         } else {
             Log::Debug('ReservationWriteWebService.Checkout() - Reservation Failed.');
 
-            $this->server->WriteResponse(new FailedResponse($this->server, $result->Errors()), RestResponse::BAD_REQUEST_CODE);
+            $this->server->WriteResponse(new FailedResponse($result->Errors()), RestResponse::BAD_REQUEST_CODE);
         }
     }
 
@@ -211,7 +205,7 @@ class ReservationWriteWebService
             Log::Debug('ReservationWriteWebService.Delete() - Reservation Failed.');
 
             $this->server->WriteResponse(
-                new FailedResponse($this->server, $result->Errors()),
+                new FailedResponse($result->Errors()),
                 RestResponse::BAD_REQUEST_CODE
             );
         }

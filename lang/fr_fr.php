@@ -389,6 +389,7 @@ class fr_fr extends en_gb
         $strings['ConfigurationUpdated'] = 'Le fichier de configuration a été mis à jour';
         $strings['ConfigurationUiNotEnabled'] = 'Cette page est inacessible car $conf[\'settings\'][\'pages\'][\'enable.configuration\'] est égal à false ou manquant.';
         $strings['ConfigurationFileNotWritable'] = 'Le fichier de configuration n\'est pas accessible en écriture. Veuillez vérifier les permissions de ce fichier et essayez à nouveau.';
+        $strings['ConfigurationEnvWarning'] = 'Certaines valeurs de configuration sont remplacées par vos variables d\'environnement ou le fichier <code>.env</code>. Il se peut que des modifications ne soient possibles que si vous supprimez les variables d\'environnement correspondantes.';
         $strings['ConfigurationUpdateHelp'] = 'Veuillez vous référer à la section Configuration du <a target=_blank href=%s>fichier d\'aide</a> pour la documentation concernant ces paramètres.';
         $strings['GeneralConfigSettings'] = 'paramètres';
         $strings['UseSameLayoutForAllDays'] = 'Utiliser la même disposition pour tous les jours';
@@ -411,7 +412,7 @@ class fr_fr extends en_gb
         $strings['hours'] = 'heures';
         $strings['days'] = 'jours';
         $strings['ReminderBeforeStart'] = 'avant l\'heure de début';
-        $strings['ReminderBeforeEnd'] = 'après l\'heure de fin';
+        $strings['ReminderBeforeEnd'] = 'avant l\'heure de fin';
         $strings['Logo'] = 'Logo';
         $strings['CssFile'] = 'Fichier CSS';
         $strings['ThemeUploadSuccess'] = 'Vos modifications ont été sauvegardées. Rafraîchissez la page pour que les changements prennent effet.';
@@ -502,7 +503,7 @@ class fr_fr extends en_gb
         $strings['AutoReleaseNotification'] = 'Libéré automatiquement dans %s minutes sans confirmation';
         $strings['RequiresCheckInNotification'] = 'Nécessite un check in/out';
         $strings['NoCheckInRequiredNotification'] = 'Ne nécessite pas de check in/out';
-        $strings['RequiresApproval'] = 'Nécessite un ccord';
+        $strings['RequiresApproval'] = 'Nécessite un accord';
         $strings['CheckingIn'] = 'Check In';
         $strings['CheckingOut'] = 'Check Out';
         $strings['CheckIn'] = 'Check In';
@@ -530,10 +531,10 @@ class fr_fr extends en_gb
         $strings['SendAsEmail'] = 'Envoyer par Email';
         $strings['UsersInGroups'] = 'Utilisateurs dans le Groupe';
         $strings['UsersWithAccessToResources'] = 'Utilisateurs avec Accès à la Ressource';
-        $strings['AnnouncementSubject'] = 'Une nouvelle annonce a été posdtée par %s';
+        $strings['AnnouncementSubject'] = 'Une nouvelle annonce a été postée par %s';
         $strings['AnnouncementEmailNotice'] = 'Les utilisateurs recevront cette annonce par email';
         $strings['Day'] = 'Jour';
-        $strings['NotifyWhenAvailable'] = 'Me notifier Quand Disponible';
+        $strings['NotifyWhenAvailable'] = 'Me notifier quand disponible';
         $strings['AddingToWaitlist'] = 'Rajouté à la liste d\'attente';
         $strings['WaitlistRequestAdded'] = 'Vous serez notifié si cet horaire devient disponible';
         $strings['PrintQRCode'] = 'Imprimer le code QR';
@@ -995,7 +996,7 @@ class fr_fr extends en_gb
         $strings['NoGroupUpcomingReservations'] = 'Votre groupe n\'a aucune réservation à venir';
         $strings['GroupUpcomingReservations'] = 'Prochaines réservations de mon/des groupes';
         //End Group Upcoming Reservations
-        
+
         //Facebook Login SDK Error
         $strings['FacebookLoginErrorMessage'] = 'Une erreur est survenue lors de la connexion avec Facebook. Veuillez réessayer.';
         //End Facebook Login SDK Error
@@ -1005,12 +1006,12 @@ class fr_fr extends en_gb
         $strings['PendingApprovalReservations'] = 'Réservations en attente d\'approbation';
         $strings['LaterThisMonth'] = 'Plus tard ce mois-ci';
         $strings['LaterThisYear'] = 'Plus tard cette année';
-        $strings['Remaining'] = 'Restant';    
+        $strings['Remaining'] = 'Restant';
         //End Pending Approval Reservations in Dashboard
 
         //Missing Check In/Out Reservations in Dashboard
         $strings['NoMissingCheckOutReservations'] = 'Il n\'y a pas de réservations de départ manquantes';
-        $strings['MissingCheckOutReservations'] = 'Réservations de départ manquantes';        
+        $strings['MissingCheckOutReservations'] = 'Réservations de départ manquantes';
         //End Missing Check In/Out Reservations in Dashboard
 
         //Schedule Resource Permissions
@@ -1020,6 +1021,7 @@ class fr_fr extends en_gb
 
 
         $this->Strings = $strings;
+        return $this->Strings;
     }
 
     /**
@@ -1044,6 +1046,7 @@ class fr_fr extends en_gb
         $days['letter'] = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
 
         $this->Days = $days;
+        return $this->Days;
     }
 
     protected function _LoadMonths()
@@ -1061,11 +1064,13 @@ class fr_fr extends en_gb
         $months['abbr'] = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
 
         $this->Months = $months;
+        return $this->Months;
     }
 
     protected function _LoadLetters()
     {
         $this->Letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+        return $this->Letters;
     }
 
     protected function _GetHtmlLangCode()
