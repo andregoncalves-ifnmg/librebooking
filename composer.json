@@ -8,14 +8,14 @@
     },
     "require": {
         "php": ">=8.1",
-        "smarty/smarty": "^4.3",
         "stripe/stripe-php": "^10.2",
         "monolog/monolog": "^2.9",
         "google/recaptcha": "1.2.4",
         "gregwar/captcha": "1.*",
         "google/apiclient": "^2.0",
         "microsoft/microsoft-graph": "^2.0",
-        "facebook/graph-sdk": "~5.0"
+        "facebook/graph-sdk": "~5.0",
+        "smarty/smarty": "^4.5.5"
     },
     "repositories": [
         {
@@ -43,7 +43,8 @@
     },
     "config": {
         "allow-plugins": {
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "tbachert/spi": true
         }
     }
 }
