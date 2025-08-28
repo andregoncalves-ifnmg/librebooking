@@ -7,6 +7,7 @@
 
 # Customized Confiuration Files
 /config/config.php
+/config/config.server.php
 /config/log4php.config.xml
 **/*.config.php
 
