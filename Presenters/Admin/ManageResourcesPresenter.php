@@ -890,21 +890,50 @@ class ManageResourcesPresenter extends ActionPresenter
 
     public function PrintQRCode()
     {
-        $qrGenerator = new GDLibRenderer(400);
+        try {
+            // Confirma se a classe existe (diferença entre versão 2.x e 3.x)
+            if (!class_exists(\BaconQrCode\Writer::class)) {
+                throw new \RuntimeException('BaconQrCode\Writer não encontrado — verifique se bacon/bacon-qr-code está instalado.');
+            }
 
-        $resourceId = $this->page->GetResourceId();
+            // ATENÇÃO: em bacon-qr-code 3.x GDLibRenderer não existe mais!
+            if (!class_exists(\BaconQrCode\Renderer\GDLibRenderer::class)) {
+                throw new \RuntimeException('GDLibRenderer não existe nesta versão. Use ImageRenderer + RendererStyle + GdImageBackEnd.');
+            }
 
-        $imageUploadDir = new ImageUploadDirectory();
-        $imageName = "/resourceqr{$resourceId}.png";
-        $url = $imageUploadDir->GetPath() . $imageName;
-        $savePath = $imageUploadDir->GetDirectory() . $imageName;
+            $qrGenerator = new GDLibRenderer(400);
 
-        $qrPath = sprintf('%s/%s?%s=%s', Configuration::Instance()->GetScriptUrl(), Pages::RESOURCE_QR_ROUTER, QueryStringKeys::RESOURCE_ID, $resourceId);
+            $resourceId = $this->page->GetResourceId();
 
-        $writer = new Writer($qrGenerator);
-        $writer->writeFile($qrPath, $savePath);
-        $resource = $this->resourceRepository->LoadById($resourceId);
-        $this->page->ShowQRCode($url, $resource->GetName());
+            $imageUploadDir = new ImageUploadDirectory();
+            $imageName = "/resourceqr{$resourceId}.png";
+            $url = $imageUploadDir->GetPath() . $imageName;
+            $savePath = $imageUploadDir->GetDirectory() . $imageName;
+
+            // testa se diretório é gravável
+            if (!is_writable(dirname($savePath))) {
+                throw new \RuntimeException("Diretório não gravável: " . dirname($savePath));
+            }
+
+            $qrPath = sprintf('%s/%s?%s=%s', Configuration::Instance()->GetScriptUrl(), Pages::RESOURCE_QR_ROUTER, QueryStringKeys::RESOURCE_ID, $resourceId);
+
+            $writer = new Writer($qrGenerator);
+            $writer->writeFile($qrPath, $savePath);
+            
+            if (!file_exists($savePath)) {
+                throw new \RuntimeException("QR Code não foi gerado: $savePath");
+            }
+
+            $resource = $this->resourceRepository->LoadById($resourceId);
+            $this->page->ShowQRCode($url, $resource->GetName());
+        } catch (\Throwable $e) {
+            // log detalhado para debug
+            Debug::log("Erro ao gerar QR Code: " . $e->getMessage());
+            Debug::log($e->getTraceAsString());
+
+            // opcional: mostrar mensagem amigável na página
+            $this->page->ShowErrorMessage('Falha ao gerar QR Code. Contate o administrador.');
+        }
     }
 
     public function ActionCopyResource()

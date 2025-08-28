@@ -781,6 +781,7 @@ class pt_br extends en_gb
         $strings['GroupMembership'] = 'Membros do grupo';
         $strings['AvailableGroups'] = 'Grupos disponiveis';
         $strings['CheckingAvailabilityError'] = 'Não é possível obter a disponibilidade do recurso - muitos recursos';
+        $strings['ScanToSchedule'] = 'Escaneie para agendar';
         // End Strings
 
         // Install
