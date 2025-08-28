@@ -311,8 +311,8 @@ class pt_br extends en_gb
         $strings['AddAnnouncement'] = 'Adicionar Anúncio';
         $strings['Announcement'] = 'Anúncio';
         $strings['Priority'] = 'Prioridade';
-        $strings['Reservable'] = 'Disponível';
-        $strings['Unreservable'] = 'Indisponível';
+        $strings['Reservable'] = 'Disponível no momento';
+        $strings['Unreservable'] = 'Indisponível no momento';
         $strings['Reserved'] = 'Reservados';
         $strings['MyReservation'] = 'Minhas Reservas';
         $strings['Pending'] = 'Pendente';
@@ -443,8 +443,8 @@ class pt_br extends en_gb
         $strings['ClearFilter'] = 'Limpar filtro';
         $strings['MinimumCapacity'] = 'Capacidade mínima';
         $strings['Color'] = 'Cor';
-        $strings['Available'] = 'Disponível';
-        $strings['Unavailable'] = 'Indisponível';
+        $strings['Available'] = 'Disponível no momento';
+        $strings['Unavailable'] = 'Indisponível no momento';
         $strings['Hidden'] = 'Oculto';
         $strings['ResourceStatus'] = 'Situação do recurso';
         $strings['CurrentStatus'] = 'Situação atual';
