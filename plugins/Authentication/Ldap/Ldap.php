@@ -105,33 +105,43 @@ class Ldap extends Authentication implements IAuthentication
 
     public function Validate($username, $password)
     {
+        $valid = false;
         $this->password = $password;
 
-        $username = $this->CleanUsername($username);
-        $connected = $this->ldap->Connect();
+        try {
+            $username = $this->CleanUsername($username);
+            $connected = $this->ldap->Connect();
 
-        if (!$connected) {
-            throw new Exception("Could not connect to LDAP server. Please check your LDAP configuration settings");
+            if ($connected) {                
+                $filter = $this->options->Filter();
+                $isValid = $this->ldap->Authenticate($username, $password, $filter);
+                Log::Debug("Result of LDAP Authenticate for user %s: %d", $username, $isValid);
+
+                if ($isValid) {
+                    $this->user = $this->ldap->GetLdapUser($username);
+                    $valid = $this->LdapUserExists();
+
+                    if (!$valid) 
+                        Log::Error("Could not load user details from LDAP. Check your ldap settings. User: %s", $username);
+                } 
+                else 
+                    Log::Error("LDAP authentication failed for user: %s", $username);                    
+            } 
+            else 
+                Log::Error("LDAP connection failed for user: %s", $username);                
+        } catch (Exception $ex) {
+            Log::Error("Exception during LDAP validation for user %s: %s", $username, $ex->getMessage());
+        }   
+
+        try {
+            if (!$valid && $this->options->RetryAgainstDatabase())
+                $valid = $this->authToDecorate->Validate($username, $password);
+        } catch (Exception $ex) {
+            Log::Error("Database fallback authentication failed for user %s. Error: %s", $username, $ex->getMessage());
+            $valid = false;
         }
-        $filter = $this->options->Filter();
-        $isValid = $this->ldap->Authenticate($username, $password, $filter);
-        Log::Debug("Result of LDAP Authenticate for user %s: %d", $username, $isValid);
 
-        if ($isValid) {
-            $this->user = $this->ldap->GetLdapUser($username);
-            $userLoaded = $this->LdapUserExists();
-
-            if (!$userLoaded) {
-                Log::Error("Could not load user details from LDAP. Check your ldap settings. User: %s", $username);
-            }
-            return $userLoaded;
-        } else {
-            if ($this->options->RetryAgainstDatabase()) {
-                return $this->authToDecorate->Validate($username, $password);
-            }
-        }
-
-        return false;
+        return $valid;
     }
 
     public function Login($username, $loginContext)
