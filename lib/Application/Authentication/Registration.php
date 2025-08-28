@@ -163,6 +163,8 @@ class Registration implements IRegistration
                 $userGroups = [new UserGroup(5, 'Servidores')];
             elseif (str_contains($user->Email(), '@aluno.ifnmg.edu.br')) 
                 $userGroups = [new UserGroup(6, 'Alunos')];
+            else
+                $userGroups = [new UserGroup(6, 'Alunos')];
             
             $this->Register(
                 $user->UserName(),
