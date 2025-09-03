@@ -239,7 +239,8 @@ class PluginManager
 
     private function Cached($cacheKey)
     {
-        return array_key_exists($cacheKey, $this->cache);
+        //return array_key_exists($cacheKey, $this->cache);
+        return isset($this->cache[$cacheKey]);
     }
 
     private function Cache($cacheKey, $object)
@@ -249,6 +250,7 @@ class PluginManager
 
     private function GetCached($cacheKey)
     {
-        return $this->cache[$cacheKey];
+        //return $this->cache[$cacheKey];
+        return array_key_exists($cacheKey, $this->cache) ? $this->cache[$cacheKey] : null;
     }
 }

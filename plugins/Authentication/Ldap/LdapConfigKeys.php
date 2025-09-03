@@ -12,7 +12,6 @@ class LdapConfigKeys extends PluginConfigKeys
         'default' => '',
         'label' => 'LDAP Host',
         'description' => 'Hostname or IP address of LDAP server',
-        'section' => 'ldap'
     ];
 
     public const PORT = [
@@ -20,8 +19,7 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'integer',
         'default' => 389,
         'label' => 'LDAP Port',
-        'description' => 'Port of LDAP server (usually 389 or 636 for SSL)',
-        'section' => 'ldap'
+        'description' => 'Port of LDAP server (usually 389 or 636 for SSL)'
     ];
 
     public const VERSION = [
@@ -29,8 +27,7 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'integer',
         'default' => 3,
         'label' => 'LDAP Version',
-        'description' => 'LDAP protocol version (usually 3)',
-        'section' => 'ldap'
+        'description' => 'LDAP protocol version (usually 3)'
     ];
 
     public const STARTTLS = [
@@ -38,8 +35,7 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'boolean',
         'default' => false,
         'label' => 'Use StartTLS',
-        'description' => 'Whether to use StartTLS encryption',
-        'section' => 'ldap'
+        'description' => 'Whether to use StartTLS encryption'
     ];
 
     public const BINDDN = [
@@ -47,8 +43,7 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'string',
         'default' => '',
         'label' => 'Bind DN',
-        'description' => 'DN to bind to LDAP server',
-        'section' => 'ldap'
+        'description' => 'DN to bind to LDAP server'
     ];
 
     public const BINDPW = [
@@ -57,7 +52,6 @@ class LdapConfigKeys extends PluginConfigKeys
         'default' => '',
         'label' => 'Bind Password',
         'description' => 'Password to bind to LDAP server',
-        'section' => 'ldap',
         'is_protected' => true
     ];
 
@@ -66,8 +60,7 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'string',
         'default' => '',
         'label' => 'Base DN',
-        'description' => 'Base DN for LDAP searches',
-        'section' => 'ldap'
+        'description' => 'Base DN for LDAP searches'
     ];
 
     public const FILTER = [
@@ -75,8 +68,7 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'string',
         'default' => '(uid=%s)',
         'label' => 'Search Filter',
-        'description' => 'LDAP search filter (use %s for username)',
-        'section' => 'ldap'
+        'description' => 'LDAP search filter (use %s for username)'
     ];
 
     public const SCOPE = [
@@ -85,7 +77,6 @@ class LdapConfigKeys extends PluginConfigKeys
         'default' => 'sub',
         'label' => 'Search Scope',
         'description' => 'LDAP search scope (base, one, or sub)',
-        'section' => 'ldap',
         'choices' => [
             'base' => 'Base',
             'one' => 'One Level',
@@ -98,8 +89,7 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'boolean',
         'default' => false,
         'label' => 'Retry Against Database',
-        'description' => 'Try to authenticate against the database if LDAP authentication fails',
-        'section' => 'ldap'
+        'description' => 'Try to authenticate against the database if LDAP authentication fails'
     ];
 
     public const ATTRIBUTE_MAPPING = [
@@ -107,8 +97,7 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'string',
         'default' => 'sn=sn,givenname=givenname,mail=mail,telephonenumber=telephonenumber,physicaldeliveryofficename=physicaldeliveryofficename,title=title',
         'label' => 'Attribute Mapping',
-        'description' => 'Mapping of LibreBooking attributes to LDAP attributes',
-        'section' => 'ldap'
+        'description' => 'Mapping of LibreBooking attributes to LDAP attributes'
     ];
 
     public const USER_ID_ATTRIBUTE = [
@@ -116,8 +105,7 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'string',
         'default' => 'uid',
         'label' => 'User ID Attribute',
-        'description' => 'LDAP attribute to use as user ID',
-        'section' => 'ldap'
+        'description' => 'LDAP attribute to use as user ID'
     ];
 
     public const REQUIRED_GROUP = [
@@ -125,8 +113,7 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'string',
         'default' => '',
         'label' => 'Required Group',
-        'description' => 'LDAP group required for authentication',
-        'section' => 'ldap'
+        'description' => 'LDAP group required for authentication'
     ];
 
     public const SYNC_GROUPS = [
@@ -134,8 +121,7 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'boolean',
         'default' => false,
         'label' => 'Sync Groups',
-        'description' => 'Synchronize LDAP groups with LibreBooking groups',
-        'section' => 'ldap'
+        'description' => 'Synchronize LDAP groups with LibreBooking groups'
     ];
 
     public const PREVENT_CLEAN_USERNAME = [
@@ -143,8 +129,7 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'boolean',
         'default' => false,
         'label' => 'Prevent Clean Username',
-        'description' => 'Do not clean username from domain or email format',
-        'section' => 'ldap'
+        'description' => 'Do not clean username from domain or email format'
     ];
 
     // Adding the debug setting that's referenced in LdapOptions::IsLdapDebugOn()
@@ -153,7 +138,6 @@ class LdapConfigKeys extends PluginConfigKeys
         'type' => 'boolean',
         'default' => false,
         'label' => 'Enable LDAP Debug',
-        'description' => 'Enable debugging for LDAP authentication',
-        'section' => 'ldap'
+        'description' => 'Enable debugging for LDAP authentication'
     ];
 }

@@ -12,7 +12,7 @@ class LdapOptions
 
         Configuration::Instance()->Register(
             dirname(__FILE__) . '/Ldap.config.php',
-            '',
+            'settings',
             LdapConfigKeys::CONFIG_ID,
             false,
             LdapConfigKeys::class
@@ -78,7 +78,8 @@ class LdapOptions
 
     public function IsLdapDebugOn()
     {
-        return $this->GetConfig('ldap.debug.enabled', new BooleanConverter());
+        //return $this->GetConfig('ldap.debug.enabled', new BooleanConverter());
+        return $this->GetConfig(LdapConfigKeys::DEBUG_ENABLED, new BooleanConverter());
     }
 
     public function Attributes()
